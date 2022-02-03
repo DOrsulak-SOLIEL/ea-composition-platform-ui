@@ -13,7 +13,7 @@ import {BlazegraphService} from "./services/blazegraph.service";
 export class AppComponent implements OnInit{
   constructor( private blazegraphService: BlazegraphService) {
   }
-  title = 'ea-blazegraph-ui';
+  title = 'ea-portal-ui';
 
   nodes: Node[] = nodes;
   //clusters: ClusterNode[] = clusters;
