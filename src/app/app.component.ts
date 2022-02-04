@@ -73,14 +73,21 @@ export class AppComponent implements OnInit{
   update$: Subject<boolean> = new Subject();
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
+  data: any;
+  visjsData: any;
 
   ngOnInit() {
-    // this.blazegraphService.requestData();
-    // this.blazegraphService.getResponseData().subscribe( data => {
-    //   this.nodes = data.nodes;
-    //   this.links = data.links;
-    // });
+/*     this.blazegraphService.requestData();
+     this.blazegraphService.getResponseData().subscribe( data => {
+       this.nodes = data.nodes;
+       this.links = data.links;
+     });*/
 
+     this.blazegraphService.getAPIMock().subscribe( data => {
+       this.data = data;
+       console.log(this.data);
+       this.visjsData = this.translateDataVISJS(this.data);
+     });
     this.setInterpolationType(this.curveType);
   }
 
@@ -130,6 +137,16 @@ export class AppComponent implements OnInit{
     }*/
   }
 
+  translateDataVISJS(rsp: any): any {
+    let visFormatNodes = [];
+    rsp.head.vars.forEach((item: string) => {
+      visFormatNodes.push({
+        id: visFormatNodes.length + 1,
+        label: item
+      });
+    });
 
+    return rsp;
+  }
 
 }
