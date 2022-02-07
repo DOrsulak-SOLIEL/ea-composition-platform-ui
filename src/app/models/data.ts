@@ -126,7 +126,7 @@ export const SPEdges = [
 export const NodesTest = [
   { id: "Organization 1", label: "Organization 1", type: "organization", color: {background: 'red'} },
   { id: "Project 1", label: "Project 1", type:"project", color: {background: 'orange'} },
-  { id: "Project 2", label: "Project 2", type: "project", color: {background: 'orange'} },
+  { id: "Project 2", label: "Project 2", type: "project", color: {background: 'orange'}, hidden: false },
   { id: "Objective 1", label: "Objective 1", type: "objective", color: {background: 'blue'} },
   { id: "Objective 2", label: "Objective 2", type: "objective", color: {background: 'blue'} },
   { id: "Objective 3", label: "Objective 3", type: "objective", color: {background: 'blue'} },
@@ -148,7 +148,7 @@ export const NodesTest = [
     to: "Project 1",
     relation: "owns",
     label: 'owns',
-    arrows: "to",
+    arrows: "to, from",
     color: { color: "red" },
   },
   {
