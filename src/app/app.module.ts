@@ -8,10 +8,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MaterialModule } from "./ui/material.module";
 import { HttpClientModule } from '@angular/common/http';
+import { VisjsExampleComponent } from './visjs-example/visjs-example.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    VisjsExampleComponent
   ],
   imports: [
     BrowserModule,

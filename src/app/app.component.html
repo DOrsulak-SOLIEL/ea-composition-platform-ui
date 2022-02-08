@@ -1,4 +1,10 @@
-<div class="card">
+<div style="background-color: darkcyan; height: 75px; color: white;">
+  <div class="">
+    <h1 style="line-height: 75px;margin-left: 15px;">EAD Portal Demo Page</h1>
+  </div>
+</div>
+<div class="card" *ngIf="data">
+  <app-visjs-example [data]= "visjsData"></app-visjs-example>
   <mat-drawer-container class="example-container">
     <!--<mat-drawer mode="side" opened class="sidebar">
       <h2>Configuration</h2>
@@ -48,6 +54,7 @@
     </mat-drawer>-->
 
     <mat-drawer-content>
+      <p>ngx-graph ex:</p>
       <div class="page">
         <ngx-graph
           [links]="links"
@@ -102,7 +109,3 @@
     </mat-drawer-content>
   </mat-drawer-container>
   <router-outlet></router-outlet>
-
-
-
-

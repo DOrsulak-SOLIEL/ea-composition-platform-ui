@@ -1,0 +1,43 @@
+<p>vis.js ex:</p>
+<p>
+  <a href="https://visjs.github.io/vis-data/data/dataview.html" target="_blank">
+    <code>vis.DataView</code></a
+  >
+</p>
+<div id="mynetworkTest" style="height: 400px; width: 100%;"></div>
+
+<label>
+  Example Filter nodes:
+  <select (change)="filterUpdated($event)"  id="nodeFilterSelect">
+    <option value>All characters</option>
+    <option value="kid">kids</option>
+    <option value="adult">adults</option>
+    <option value="male">male</option>
+    <option value="female">female</option>
+  </select>
+</label>
+<br />
+<br />
+<label>
+  Filter edges
+  <div>
+    <label>
+      <input (change)="edgesUpdated($event)" type="checkbox" name="edgesFilter" value="parent" checked />
+      Is <span style="color: green">parent</span> of
+    </label>
+  </div>
+  <div>
+    <label>
+      <input (change)="edgesUpdated($event)" type="checkbox" name="edgesFilter" value="teacher" checked />
+      Is <span style="color: blue">teacher</span> of
+    </label>
+  </div>
+  <div>
+    <label>
+      <input (change)="edgesUpdated($event)" type="checkbox" name="edgesFilter" value="friend" checked />
+      Is <span style="color: red">friend</span> of
+    </label>
+  </div>
+</label>
+<br />
+<div id="mynetwork" style="height: 400px; width: 100%;"></div>
