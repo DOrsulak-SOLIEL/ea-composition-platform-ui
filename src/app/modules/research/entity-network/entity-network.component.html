@@ -1,0 +1,72 @@
+<div class="content-pane">
+  <div class="pg-header">
+    <h1 class="h3">Entity Network:</h1>
+  </div>
+  <div class="form-area">
+    <div class="simple-row">
+      <label for="entityOption"
+             class=" control-label" style="line-height: 33px; font-size: 16px">Entity:
+      </label>
+      <app-autocomplete
+        id="entityOption"
+        class="col-sm-4"
+        (selectedChange)="entityChange()"
+        [(selected)]="formValues.entity.value"
+        [choicesArray]="formValues.entity.filteredOptions"
+        [placeholderText]="'Select Entity...'"
+        [primaryKey]="'id'"
+        [useBuffer]="false"
+        bindLabel="id"
+        style="max-width: 220px !important;"
+      >
+        <ng-template let-item>
+          <div>{{item.name}}&nbsp;</div>
+        </ng-template>
+      </app-autocomplete>
+    </div>
+    <div class="simple-row">
+      <label for="entityOption"
+             class=" control-label" style="line-height: 33px; font-size: 16px">Node:
+      </label>
+      <app-autocomplete
+        id="entityOption"
+        class="col-sm-4"
+        (selectedChange)="nodeChange()"
+        [(selected)]="formValues.node.value"
+        [choicesArray]="formValues.node.filteredOptions"
+        [placeholderText]="'Select Node...'"
+        [primaryKey]="'id'"
+        [useBuffer]="false"
+        bindLabel="id"
+        style="max-width: 220px !important;"
+      >
+        <ng-template let-item>
+          <div>{{item.name}}&nbsp;</div>
+        </ng-template>
+      </app-autocomplete>
+    </div>
+  </div>
+  <div class="simple-row">
+    <label for="entityOption"
+           class=" control-label" style="line-height: 33px; font-size: 16px">Type:
+    </label>
+    <app-autocomplete
+      id="typeOption"
+      class="col-sm-4"
+      (selectedChange)="typeChange($event)"
+      [(selected)]="formValues.type.value"
+      [choicesArray]="formValues.type.filteredOptions"
+      [placeholderText]="'Select Type...'"
+      [primaryKey]="'id'"
+      [useBuffer]="false"
+      bindLabel="id"
+      style="max-width: 220px !important;"
+    >
+      <ng-template let-item>
+        <div>{{item.name}}&nbsp;</div>
+      </ng-template>
+    </app-autocomplete>
+  </div>
+  <div #myEntityNetwork id="myEntityNetwork"
+       style="height: 65vh; width: 100%;" class="grid-area"></div>
+</div>

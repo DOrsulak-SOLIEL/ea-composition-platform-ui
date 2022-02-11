@@ -1,0 +1,37 @@
+<ng-select (change)="onChange($event)"
+           (open)="onOpen($event)"
+           (scroll)="onScroll($event)"
+           (scrollToEnd)="onScrollToEnd()"
+           (search)="onSearch($event)"
+           [(ngModel)]="selectedValue"
+           [clearable]="false"
+           [closeOnSelect]="!multiple"
+           [disabled]="disabled"
+           [items]="choicesLoaded"
+           [loading]="loading"
+           [multiple]="multiple"
+           [ngClass]="hasError?'state-error':''"
+           [placeholder]="placeHolder"
+           [searchable]="true"
+           [selectOnTab]="true"
+           [virtualScroll]="true"
+           appendTo="body"
+           bindLabel="label"
+           class="">
+  <ng-template ng-header-tmp>
+    <small class="form-text text-muted widget-info-header">
+      Showing {{filteredChoicesNum}} of {{choices.length}} options</small>
+    <button (click)="unselectAll()" *ngIf="multiple" class="btn btn-sm btn-secondary">Unselect</button>
+  </ng-template>
+  <ng-template let-clear="clear" let-item="item" ng-label-tmp>
+    <ng-template [ngTemplateOutletContext]="{ $implicit: item }" [ngTemplateOutlet]="templateRef">
+    </ng-template>
+  </ng-template>
+  <ng-template let-index="index" let-item="item" ng-option-tmp>
+    <div class="list-template">
+      <!-- <input id="item-{{index}}" type="checkbox" [ngModel]="item.selected"  *ngIf="multiple"/> -->
+      <ng-template [ngTemplateOutletContext]="{ $implicit: item }" [ngTemplateOutlet]="templateRef">
+      </ng-template>
+    </div>
+  </ng-template>
+</ng-select>

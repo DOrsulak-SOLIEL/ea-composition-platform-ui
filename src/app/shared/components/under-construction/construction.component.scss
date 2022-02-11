@@ -1,0 +1,85 @@
+
+.adf-home-card {
+    float: left;
+    margin: 10px 10px 10px 10px;
+    width: 290px;
+    display: block;
+    overflow-y: auto;
+    height: 400px;
+
+    h2 {
+        line-height: 30px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .material-icons {
+        position: relative;
+        top: 6px;
+    }
+}
+
+.adf-home-card-title {
+    padding: 24px;
+    cursor: pointer;
+    height: 55px;
+    margin: -63px -24px 18px -25px !important;
+}
+
+.adf-home-card__text {
+    font-size: 16px;
+    line-height: 18px;
+}
+
+.adf-home-feature-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+span.home--feature-list__text:before {
+    content: '';
+    padding-left: 4px;
+}
+
+// following ar for test
+.sidenav {
+    height: 100%;
+    width: 200px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.wrapper {
+    display: flex;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    height: 100vh;
+}
+
+.mycontent-left {
+    border-right: 2px solid #a9a9a9;
+  }
+
+.mat-whiteframe-z2 {
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+    min-width: 200px;
+    opacity: 0;
+    z-index: 0;
+}
+.sidenav-content {
+    margin-left: 20px;
+}
+
+mat-list-item.selected{
+    font-weight: bold;
+    background-color: #658ca9;
+}

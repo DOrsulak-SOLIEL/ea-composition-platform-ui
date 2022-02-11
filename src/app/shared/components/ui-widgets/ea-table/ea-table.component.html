@@ -1,0 +1,428 @@
+<ng-container class="ea-table-container">
+
+  <!-- toolbar -->
+  <mat-toolbar *ngIf="options.showToolbar" class="toolbar-color top-card-radius">
+    <mat-toolbar-row>
+      <!-- Filter -->
+      <div *ngIf="options.isFilterable">
+        <form (ngSubmit)="onSubmit()" [formGroup]="tableForm" class="input-group" name="searchForm">
+          <input class="form-control input" formControlName="searchTerm" id="search" name="search"
+                 placeholder="Filter..." title="Search" type="search">
+          <button class="btn search-icon-button" type="submit">
+            <span class="fa fa-search search-icon"></span>
+          </button>
+        </form>
+      </div>
+      <!-- table settings -->
+      <span class="example-spacer"></span>
+      <button [matMenuTriggerFor]="columnOptionsDropdown"
+              [ngbTooltip]="'Filter Columns'"
+              class=" toolbar-buttons" mat-icon-button
+              type="button">
+        <span class="fa fa-columns toolbar-icons menu-svg icon-theme"></span>
+      </button>
+      <button (click)="expandCollapseTable()"
+              [ngbTooltip]="'Toggle Height'"
+              class=" toolbar-buttons"
+              mat-icon-button type="button">
+        <span class="fa fa-expand toolbar-icons menu-svg icon-theme"></span>
+      </button>
+      <button (click)="exportAsExcel()"
+              [ngbTooltip]="'Download Page'"
+              class=" toolbar-buttons"
+              mat-icon-button type="button">
+        <span class="fa fa-file-download toolbar-icons menu-svg icon-theme"></span>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <mat-progress-bar *ngIf="isRetrievingData" class="loading-topbar" mode="query"></mat-progress-bar>
+  <!-- Table -->
+  <div *ngIf="!isRetrievingData" class="toolbar-color loading-topbar" style="width: 100%; padding: 0; margin: 0;"></div>
+  <div #scrollbox
+       [style.max-height]="userTableHeight"
+       class="ea-table" id="scrollBox">
+    <table (matSortChange)="sortTable($event)"
+           [dataSource]="tableDataSource"
+           [matSortActive]="(options.currentSortColumn || '') | sortHeaderNamePipe: tableColumns"
+           [matSortDirection]="options.currentSortDirection || ''"
+           class="table-format" id="matTable"
+           mat-table
+           matSort
+           multiTemplateDataRows>
+
+      <!-- column definitions -->
+      <ng-container *ngFor="let tableColumn of tableColumns; trackBy:identify" [matColumnDef]="tableColumn.name"
+                    class="header-column">
+        <!-- header definition -->
+        <!-- if sortable column header -->
+        <ng-container *ngIf="tableColumn.isSortable; else notSortable" class="header-column">
+          <th *matHeaderCellDef [arrowPosition]="tableColumn.position === 'right' ? 'before' : 'after'"
+              [class.w-100]="tableColumn.forcedWidth === 'w-100'"
+              [class.w-30]="tableColumn.forcedWidth === 'w-30'"
+              [class.w-40]="tableColumn.forcedWidth === 'w-40'"
+              [class.w-50]="tableColumn.forcedWidth === 'w-50'"
+              [class.w-60]="tableColumn.forcedWidth === 'w-60'"
+              [class.w-70]="tableColumn.forcedWidth === 'w-70'"
+              [disabled]="isRetrievingData || errMsg.length > 0 || options.completeWithNoResults"
+              [hidden]="tableColumn.hideColumn"
+              [mat-sort-header]="tableColumn.name"
+              [style.max-width]="tableColumn.width"
+              class="mat-column header-column header-text row-space sort-arrow add-border"
+              mat-header-cell style="">
+            {{tableColumn.name}}
+          </th>
+        </ng-container>
+        <!-- else not sortable column-->
+        <ng-template #notSortable>
+          <ng-container *ngIf="tableColumn.headerType === 'checkbox'">
+            <th *matHeaderCellDef
+                [class.w-100]="tableColumn.forcedWidth === 'w-100'"
+                [class.w-30]="tableColumn.forcedWidth === 'w-30'"
+                [class.w-40]="tableColumn.forcedWidth === 'w-40'"
+                [class.w-50]="tableColumn.forcedWidth === 'w-50'"
+                [class.w-60]="tableColumn.forcedWidth === 'w-60'"
+                [class.w-70]="tableColumn.forcedWidth === 'w-70'"
+                [hidden]="tableColumn.hideColumn"
+                [style.max-width]="tableColumn.width"
+                class="mat-column header-column header-text row-space add-border"
+                mat-header-cell>
+              <label class="pointer">
+                <input (change)="emitRowAction($event, {}, tableColumn, true)" class="input-right-margin pointer"
+                       type="checkbox">
+                {{tableColumn.name}}
+              </label>
+            </th>
+          </ng-container>
+          <ng-container *ngIf="tableColumn.headerType !== 'checkbox'">
+            <th *matHeaderCellDef
+                [class.w-100]="tableColumn.forcedWidth === 'w-100'"
+                [class.w-30]="tableColumn.forcedWidth === 'w-30'"
+                [class.w-40]="tableColumn.forcedWidth === 'w-40'"
+                [class.w-50]="tableColumn.forcedWidth === 'w-50'"
+                [class.w-60]="tableColumn.forcedWidth === 'w-60'"
+                [class.w-70]="tableColumn.forcedWidth === 'w-70'"
+                [hidden]="tableColumn.hideColumn"
+                [style.max-width]="tableColumn.width"
+                class="mat-column header-column header-text row-space add-border"
+                mat-header-cell>
+              {{tableColumn.name}}
+            </th>
+          </ng-container>
+        </ng-template>
+
+        <!-- Column data definition -->
+        <!-- column data -->
+        <ng-container *matCellDef="let element">
+          <!-- is not action column -->
+          <td *ngIf="!tableColumn.options || !tableColumn.options.length"
+              [class.align-top]="tableColumn.type !== 'textarea'"
+              [class.top-padding-text]="tableColumn.type === 'textarea'"
+              [class.top-padding]="tableColumn.type === 'icon' || tableColumn.type === 'textarea'"
+              [class.w-100]="tableColumn.forcedWidth === 'w-100'"
+              [class.w-30]="tableColumn.forcedWidth === 'w-30'"
+              [class.w-40]="tableColumn.forcedWidth === 'w-40'"
+              [class.w-50]="tableColumn.forcedWidth === 'w-50'"
+              [class.w-60]="tableColumn.forcedWidth === 'w-60'"
+              [class.w-70]="tableColumn.forcedWidth === 'w-70'"
+              [hidden]="tableColumn.hideColumn"
+              [style.max-width]="tableColumn.width"
+              [style.width]="tableColumn.width"
+              class="mat-column row-space"
+              mat-cell
+              style="width: 150px;">
+            <!-- regular column data row -->
+            <ng-container *ngIf="!tableColumn.childRows;else displaySubRows">
+              <ng-container *ngIf="!tableColumn.type || tableColumn.type === 'date'">
+                <ng-template
+                  *ngTemplateOutlet="displayValue; context: {tableColumn: tableColumn, element: element, prefix: tableColumn.prefix}"></ng-template>
+              </ng-container>
+
+              <!-- Link button data row -->
+              <button (click)="emitRowAction($event, element, tableColumn)"
+                      *ngIf="tableColumn.type === 'linkButton'"
+                      [disabled]="isRetrievingData"
+                      class="tbl-btn-link"
+                      type="button">
+                                  <span class="label-linkedCount label label-default">
+                                      {{element | dataPropertyGetter: tableColumn.dataKey || ''}} Links
+                                  </span>
+                <span class="fa fa-edit text-primary links-icon"></span>
+                <span class="sr-only">Edit Links</span>
+              </button>
+
+              <!-- regular link data row -->
+              <ng-container *ngIf="tableColumn.type === 'link'">
+                <button (click)='emitRowAction($event, element, tableColumn)'
+                        [disabled]="isRetrievingData"
+                        class="btn tbl-btn-link single-line-text link"
+                        type="button">{{element | dataPropertyGetter: tableColumn.dataKey}}</button>
+              </ng-container>
+
+              <!-- regular icon data row -->
+              <div *ngIf="tableColumn.type === 'icon'" [class.center-item]="tableColumn.position === 'center'">
+                <i *ngIf='tableColumn.icon && !tableColumn.tableFunction' [ngClass]='iconClasses(tableColumn)'
+                   [style.color]="element.color"
+                   aria-hidden="true"
+                   class="dropdown-icon table-icon"></i>
+                <i *ngIf='!tableColumn.icon && tableColumn.tableFunction'
+                   [ngClass]="iconClasses((element | dataPropertyGetter: tableColumn.dataKey || '') | executeProcessPipe: tableColumn.tableFunction : tableColumn)"
+                   [style.color]="element.color"
+                   aria-hidden="true"
+                   class="dropdown-icon table-icon"></i>
+              </div>
+              <!-- regular array data row -->
+              <ng-container
+                *ngIf="tableColumn.type === 'arrayVerticalList'">
+                <div *ngFor="let rowItem of (element | dataPropertyGetter: tableColumn.dataKey || '')">
+                  <a (click)='emitRowAction($event, rowItem, tableColumn)'
+                     class="linkColor">{{rowItem[tableColumn.arrayKey || '']}}</a>
+                </div>
+              </ng-container>
+              <ng-container
+                *ngIf="tableColumn.type === 'checkbox'">
+                <input (change)="emitRowAction($event, element, tableColumn, false)"
+                       [checked]="element[tableColumn.dataKey]"
+                       class="pointer"
+                       type="checkbox">
+              </ng-container>
+              <ng-container
+                *ngIf="tableColumn.type === 'textarea'">
+                <textarea [(ngModel)]="element[tableColumn.dataKey]"
+                          [attr.aria-describedby]="'error-' + element.name"
+                          [readonly]="!element[tableColumn.disabledKey || ''] || false"
+                          class="form-control resize-v textarea-style"
+                          cols="40"
+                          rows="1"></textarea>
+                <p *ngIf="1 === 1" [id]="'error-' + element.name"
+                   class="msg-error ">
+                  {{element[tableColumn.errorKey || '']}}
+                </p>
+              </ng-container>
+            </ng-container>
+            <!-- multi row column data row -->
+            <ng-template #displaySubRows>
+              <dl>
+                <ng-container *ngFor="let subRowColumn of tableColumn.childRows; trackBy:identify">
+                  <!-- sub row data -->
+                  <ng-container *ngIf="!subRowColumn.href">
+                    <ng-template
+                      *ngTemplateOutlet="displayValue; context: {prefix:subRowColumn.prefix, tableColumn: subRowColumn, parentColumn: tableColumn, element: element, forceLeft: true}"></ng-template>
+                  </ng-container>
+                  <!-- sub row data link-->
+                  <ng-container *ngIf="subRowColumn.href">
+                    <button (click)='emitRowAction($event, element, subRowColumn)'
+                            [disabled]="isRetrievingData"
+                            class="btn tbl-btn-link"
+                            type="button">{{ subRowColumn | dataPropertyGetter: subRowColumn.dataKey}}</button>
+                  </ng-container>
+                </ng-container>
+              </dl>
+            </ng-template>
+
+          </td>
+          <!-- is action column -->
+          <td
+            *ngIf="tableColumn.options && tableColumn.options.length"
+            [hidden]="tableColumn.hideColumn"
+            [style.max-width]="tableColumn.width"
+            [style.min-width]="tableColumn.width"
+            [style.width]="tableColumn.width"
+            [style]="tableColumn.style"
+            [width]="tableColumn.width"
+            class="mat-column row-space action-column"
+            mat-cell
+            style="vertical-align: top;">
+            <ng-container *ngFor="let option of tableColumn.options; trackBy:identifyOptions">
+              <ng-container *ngIf="!option.type || option.type !== 'menu' ">
+                <button (click)='emitRowAction($event, element, option)' *ngIf='option.icon'
+                        [disabled]="isRetrievingData"
+                        class="std-btn"
+                        type="button"
+                >
+                  <i [ngClass]='iconClasses(option)' aria-hidden="true"
+                     class="dropdown-icon action-svg"></i>
+                </button>
+                <button (click)='emitRowAction($event, element, option)'
+                        *ngIf="!option.icon && option.type === 'link'"
+                        [disabled]="isRetrievingData" class="btn tbl-btn-link"
+                        type="button">{{option.name || 'link'}}
+                </button>
+              </ng-container>
+              <ng-container *ngIf="option.type === 'menu'">
+                <button (click)='emitMenuAction(element, option)' [disabled]="isRetrievingData"
+                        [matMenuTriggerData]="{element: element}"
+                        [matMenuTriggerFor]="appMenu"
+                        class="std-btn" type="button"
+                >
+                  <i *ngIf='option.icon' [ngClass]='iconClasses(option)' aria-hidden="true"
+                     class="dropdown-icon action-svg-dropdown"></i>
+                </button>
+              </ng-container>
+            </ng-container>
+          </td>
+        </ng-container>
+      </ng-container>
+
+      <!--Had row expand/ collapse feature working but decided to remove for simplicity. Keeping this in case we add back-->
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <!--      <ng-container matColumnDef="expandedDetail">
+              <td *matCellDef="let element" [attr.colspan]="tableColumns.length" mat-cell>
+                <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+                     class="example-element-detail">
+                  <div class="example-element-description">
+                    Fluorine is a chemical element with symbol F and atomic number 9. It is the lightest halogen and exists as
+                    a highly toxic pale yellow diatomic gas at standard conditions
+                    <span class="example-element-description-attribution"> &#45;&#45; Wikipedia </span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>-->
+
+      <!--load header-->
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" class="header-column header-row"
+          mat-header-row></tr>
+
+      <!--load data rows-->
+      <tr *matRowDef="let row; columns: displayedColumns;"
+          [style.height]="this.rowHeightPx + 'px'"
+          [style.max-height]="this.rowHeightPx + 'px'"
+          mat-row></tr>
+    </table>
+
+    <!-- waiting spinner -->
+    <div
+      *ngIf="isRetrievingData && (!tableDataSource || !tableDataSource.filteredData || tableDataSource.filteredData.length === 0)"
+      class="spinner-container">
+      <app-waiting-status *ngIf="isRetrievingData"></app-waiting-status>
+    </div>
+
+    <!-- Error Messages -->
+    <div *ngIf="errMsg" style="display: flex; justify-content: center; align-items: center;">
+      <div class="alert-info notification" style="background-color: #F8D7DA;">
+        <span class="fa fa-exclamation-triangle search-icon"></span>
+        WARNING: {{errMsg}}</div>
+    </div>
+  </div>
+  <div *ngIf="options.completeWithNoResults && !errMsg && (!tableData || tableData.length === 0)"
+       style="display: flex; justify-content: center; align-items: center;">
+    <div class="alert-info notification">
+      <span class="fa fa-exclamation-triangle search-icon"></span>
+      {{options.noResultsMessage || 'No Results Found'}}
+    </div>
+  </div>
+</ng-container>
+
+<!-- Pagination -->
+<div class="bottom-spacing">
+  <mat-paginator (page)="pagingChange($event)"
+                 *ngIf="options.isPageable && pageConfig.totalRecordNumber > 0"
+                 [disabled]="isRetrievingData"
+                 [length]="pageConfig.totalRecordNumber"
+                 [pageIndex]="pageConfig.pageIndex - 1"
+                 [pageSizeOptions]="pageConfig.paginationSizes"
+                 showFirstLastButtons>
+  </mat-paginator>
+</div>
+
+<!-- Action Dropdown -->
+<mat-menu #appMenu="matMenu">
+  <ng-template let-aliasMenuItems="element" matMenuContent>
+    <ng-container *ngFor="let item of actionOptions; trackBy:identifyOptions">
+      <button (click)='emitRowAction($event, aliasMenuItems, item)'
+              [disabled]="item.disabled"
+              mat-menu-item
+              type="button">
+        {{item.name}}
+      </button>
+    </ng-container>
+  </ng-template>
+</mat-menu>
+
+<!-- Table options- Column selection dropdown -->
+<mat-menu #columnOptionsDropdown>
+    <span class="example-list-section">
+    <mat-checkbox (change)="setAllCheckboxes($event.checked)"
+                  (click)="$event.stopPropagation()"
+                  [checked]="isAllChecked"
+                  class="checkbox-margin">
+      Display Columns:
+    </mat-checkbox>
+  </span>
+  <ng-template let-aliasMenuItems="element" matMenuContent>
+    <ng-container *ngFor="let column of tableColumns; trackBy:identify">
+      <p (click)="$event.stopPropagation()" class="checkbox">
+        <mat-checkbox (change)="columnCheckboxChange($event, column)" (click)="$event.stopPropagation()"
+                      [checked]="!column.hideColumn" class="checkbox">{{column.name}}</mat-checkbox>
+      </p>
+    </ng-container>
+  </ng-template>
+</mat-menu>
+
+<!-- Set the value -->
+<!--Pass in prefix for same line prefix-->
+<ng-template #displayValue let-element="element" let-forceLeft="forceLeft" let-parentColumn="parentColumn"
+             let-prefix="prefix" let-tableColumn="tableColumn" let-value="value">
+  <ul *ngIf="!tableColumn.showHTML">
+    <li *ngIf="prefix && (!tableColumn.hidePrefixIfEmpty || tableColumn.hidePrefixIfEmpty &&
+        (element | dataPropertyGetter: tableColumn.dataKey || '' ).length >= 1)"
+        [class.small-font]="tableColumn.prefixBold"
+        [class.text-left]="tableColumn.position !== 'center' && tableColumn.position !== 'right' "
+        [class.text-right]="tableColumn.position === 'center' || tableColumn.position === 'right'"
+        [style.font-weight]="tableColumn.prefixBold? 700 : 400"
+        class="single-line-list"
+    >
+      {{prefix}}</li>
+    <li
+      [class.single-line-text]="!tableColumn.wrapText"
+      [class.text-center]="tableColumn.position === 'center' && (!parentColumn || parentColumn.position !== 'center')"
+      [class.text-left]="tableColumn.position === 'left'"
+      [class.text-right]="tableColumn.position === 'right'"
+      [style.font-weight]="tableColumn.bold? 700 : 400"
+      [style.text-indent]="tableColumn.indent"
+      class=" single-line-text">
+      <!--wap text, so use collapsible-->
+      <app-collapsible *ngIf="tableColumn.wrapText && !tableColumn.tableFunction"
+                       [description]="element | dataPropertyGetter: tableColumn.dataKey || ''"
+                       [length]="tableColumn.overflowIndex || 0"
+                       class="no-margin"></app-collapsible>
+      <!--Not wrap text, has prefix: use '-' to show empty-->
+      <ng-container
+        *ngIf="!tableColumn.wrapText && !tableColumn.tableFunction">
+        <!--simple prefix-->
+        <ng-container *ngIf="(!tableColumn.hidePrefixIfEmpty || (tableColumn.hidePrefixIfEmpty &&
+        (element | dataPropertyGetter: tableColumn.dataKey || '' )))">
+          {{tableColumn.pureTextPrefix}}
+        </ng-container>
+
+        <!-- value -->
+        {{(element | dataPropertyGetter: tableColumn.dataKey || '') || tableColumn.ifEmptyUse}}
+
+        <!--simple postfix-->
+        <ng-container *ngIf="(!tableColumn.hidePostfixIfEmpty || (tableColumn.hidePostfixIfEmpty &&
+        (element | dataPropertyGetter: tableColumn.dataKey || '' )))">
+          {{tableColumn.pureTextPostfix}}
+        </ng-container>
+      </ng-container>
+
+      <!--needs table function-->
+      <ng-container *ngIf="tableColumn.tableFunction">
+        {{tableColumn.pureTextPrefix}}
+        {{(element | dataPropertyGetter: tableColumn.dataKey || '') | executeProcessPipe: tableColumn.tableFunction || '' : tableColumn}}{{tableColumn.postfix}}
+        {{tableColumn.pureTextPostfix}}
+      </ng-container>
+    </li>
+    <li *ngIf="tableColumn.postfix && (!tableColumn.hidePostfixIfEmpty || tableColumn.hidePostfixIfEmpty &&
+        (element | dataPropertyGetter: tableColumn.dataKey || '' ).length >= 1)"
+        [class.small-font]="tableColumn.postfixBold"
+        [class.text-left]="tableColumn.position === 'center' || tableColumn.position === 'left'"
+        [class.text-right]="tableColumn.position === 'right'"
+        [style.font-weight]="tableColumn.postfixBold? 700 : 400"
+    >
+      {{tableColumn.postfix}}</li>
+  </ul>
+  <app-collapsible *ngIf="tableColumn.showHTML"
+                   [description]="element | dataPropertyGetter: tableColumn.dataKey || ''"
+                   [length]="tableColumn.overflowIndex || 0"
+                   [showHTML]="true"
+                   class="no-margin"></app-collapsible>
+</ng-template>

@@ -1,0 +1,32 @@
+<div appTheme [class.wrapper-max]="hasSmallHeader"
+     [class.wrapper-min]="!hasSmallHeader"
+     class="wrapper">
+  <div class="header">
+    <app-alert-fouo></app-alert-fouo>
+    <app-header-banner (navToggle)="onSideNavToggled()"
+                       [hasNav]="true"
+                       [hasSmallHeader]="hasSmallHeader"></app-header-banner>
+  </div>
+  <mat-sidenav-container
+    class="site-background middle-wrapper"
+    [class.middle-wrapper-height-max]="hasSmallHeader"
+    [class.middle-wrapper-height-min]="!hasSmallHeader"
+    autosize>
+    <mat-sidenav [class.menu-close]="!isSideNavOpen"
+                 [class.menu-open]="isSideNavOpen"
+                 class="left-sidebar"
+                 mode="side"
+                 opened>
+      <app-left-hand-navigation [isSideNavOpen]=isSideNavOpen></app-left-hand-navigation>
+    </mat-sidenav>
+    <div [class.closed-padding]="!isSideNavOpen"
+         [class.open-padding]="isSideNavOpen"
+         class="left-sidebar--content"
+         id="topOfPage">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-container>
+  <div class="footer">
+    <app-alert-fouo></app-alert-fouo>
+  </div>
+</div>

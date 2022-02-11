@@ -1,0 +1,80 @@
+<div *ngIf='visible' [class.remove-scroll]="!isSideNavOpen"
+     class='navigations sidebar-scroll'
+>
+  <ul>
+    <ng-container *ngFor="let section of currentNavTree;let ndx=index;">
+      <ng-container *ngTemplateOutlet="sectionTemplate; context:{navItem:section,index:ndx, level:1}"></ng-container>
+    </ng-container>
+  </ul>
+</div>
+<ng-template #sectionTemplate let-level="level" let-ndx="index" let-section="navItem">
+  <li *ngIf="section" [attr.data-expanded]="section.expanded"
+      [class.noChildren]="!section || !section.childItems || section.childItems.length === 0"
+      [class.notExpanded]="!section.expanded"
+      [title]="section.tooltip || section.name"
+  >
+    <ng-container
+      *ngIf="!section.homeless;else homelessLink">
+      <span (click)="this.onNavChange(section)"
+            [class.section-open]="isSideNavOpen"
+            [class.section]="!isSideNavOpen"
+            [ngClass]="{'active': (((router.url | alternateHrefPipe: section.alternateHref)) || (!section.expanded && router.url === section.href))}"
+            [routerLinkActiveOptions]="{exact:true}"
+            [routerLinkActive]="['selected']"
+            [routerLink]="section.href"
+            class="noselect"
+            draggable="false"
+            id={{section.name}}
+      >
+        <ng-container *ngTemplateOutlet="sideLinks; context:{navItem:section, level: level}"></ng-container>
+        </span>
+    </ng-container>
+    <!--
+    is homeless- so we dont want to apply 'active' css the same way
+    -->
+    <ng-template #homelessLink>
+    <span (click)="this.onNavChange(section)"
+          *ngIf="section.homeless"
+          [class.section-open]="isSideNavOpen"
+          [class.section]="!isSideNavOpen"
+          [ngClass]="{'active': ((router.url | alternateHrefPipe: section.alternateHref)) || (!section.expanded && router.url.indexOf(section.href) !== -1)}"
+          class="noselect"
+          draggable="false"
+          id={{section.name}}
+    >
+        <ng-container *ngTemplateOutlet="sideLinks; context:{navItem:section, level:level}"></ng-container>
+        </span>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="subsectionTemplate; context:{navItem:section, level:level}"></ng-container>
+  </li>
+</ng-template>
+
+<ng-template #subsectionTemplate let-level="level + 1" let-ndx="index" let-section="navItem">
+  <div *ngIf="hasChildItems(section)"
+  >
+    <ul *ngFor="let subsection of (section.childItems || []); let mdx=index;"
+        [class.child-items]="isSideNavOpen"
+        [class.list-item-padding]="isSideNavOpen">
+      <ng-container
+        *ngTemplateOutlet="sectionTemplate; context:{navItem:subsection,index:mdx,level:level}"></ng-container>
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #sideLinks let-level="level" let-ndx="index" let-section="navItem">
+  <div *ngIf="section"
+       [class.toggle-border-bottom]="!isSideNavOpen && section.childItems && section.childItems.length > 0 && !section.expanded"
+       [class.toggle-border]="section.childItems && section.childItems.length > 0"
+       class="main-li-wrapper"
+  >
+    <i #icon *ngIf='section.icon && !section.icon.endsWith(".png")' [ngClass]='iconClasses(section)'
+       aria-hidden="true"
+       class="icon icon-theme"></i>
+    <img *ngIf='section.icon && section.icon.endsWith(".png")' alt="Requirements Analysis Office application"
+         class="icon-size icon" src="../../../assets/images/{{section.icon}}">
+    <a *ngIf='isSideNavOpen' [class.disabled]="!isLinkEnabled(section)" [id]="'eaPortal-nav-cmd-'+ ndx"
+       class="side-nav-font-space"
+    >{{section.name}}
+      <i *ngIf='hasChildItems(section) && isSideNavOpen' aria-hidden="true" class="fas fa-angle-down txt-fa"></i></a>
+  </div>
+</ng-template>

@@ -1,0 +1,19 @@
+<ng-container *ngIf="showHTML">
+  <!--  <p *ngIf="noWrap"
+       [innerHTML]="description.toString() | innerHTMLStyler: 'text-overflow: ellipsis !important; overflow: hidden !important;' +
+      'white-space: nowrap !important;display: block;word-break: break-word;'"></p>-->
+  <div *ngIf="!showMore"
+       [innerHTML]="introText">
+  </div>
+  <div *ngIf="showMore" [class.sr-only]="!showMore" [innerHTML]="description.toString()"
+       class="sr-only no-space"></div>
+</ng-container>
+
+<ng-container *ngIf="!showHTML">
+  <div *ngIf="!showMore">{{introText}}</div>
+  <div *ngIf="showMore" [class.sr-only]="!showMore" class="sr-only no-space"> {{description.toString()}}</div>
+</ng-container>
+
+<span (click)="toggleVisibilty()" *ngIf="hasRemain()" class="text-bold no-space"><a class="toggle-btn-formatting">
+  Show {{moreLess}} </a>
+</span>

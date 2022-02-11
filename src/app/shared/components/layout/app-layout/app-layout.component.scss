@@ -1,0 +1,157 @@
+.full {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  left: 0;
+}
+
+.transition {
+  transition: all 0.2s ease;
+}
+
+mat-sidenav {
+  display: flex;
+}
+
+mat-sidenav.menu-close {
+  width: 40px;
+  padding: 0;
+  margin: 0;
+  transition: ease-out 200ms;
+}
+
+mat-sidenav.menu-open {
+  width: 220px;
+  transition: ease-out 200ms;
+}
+
+.closed-padding {
+  will-change: left;
+  Left: 40px;
+  width: calc(100% - 60px);
+  transition: ease-out 200ms;
+}
+
+.open-padding {
+  will-change: left;
+  left: 220px;
+  width: calc(100% - 240px);
+  transition: ease-out 200ms;
+}
+
+.min-padding {
+  will-change: left;
+  left: 10px;
+  width: 100%;
+  transition: ease-out 200ms;
+}
+
+.mat-drawer {
+  min-width: 34px !important;
+}
+
+.mat-drawer-side {
+  border-right: none !important;
+}
+
+.mat-drawer-content {
+  margin-left: 0px !important;
+  will-change: margin-left;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.main {
+  overflow: auto;
+  min-width: 775px;
+}
+
+.side-main-content {
+  margin-bottom: 100px !important;
+  padding-bottom: 20px;
+  padding-right: 20px;
+  overflow: auto;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  max-height: 148px;
+  width: 100%;
+  z-index: 10;
+  padding: 0;
+  margin: 0 !important;
+}
+
+.wrapper {
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+.wrapper-min {
+  height: calc(100vh - 155px);
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.wrapper-max {
+  height: calc(100vh - 106px);
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.middle-wrapper {
+  width: 100% !important;
+  height: 101%;
+  position: relative;
+  padding: 0;
+  margin: 0 !important;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.middle-wrapper-height-min {
+  top: 151px !important;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.middle-wrapper-height-max {
+  top: 105px !important;
+  transition: .8s;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  height: 23px;
+  width: 100%;
+  z-index: 10;
+}
+
+.left-sidebar {
+  bottom: 50px;
+  position: relative;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.left-sidebar--content {
+  will-change: left;
+  position: relative;
+  right: 50px !important;
+  // height: calc(100vh - 200px);
+  /*
+  transition: ease-out 500ms;
+  */
+}
+
+.nav-icon {
+  /*
+  top: 10px;
+  */
+}
+
+.optional-background {
+  background-color: #fff !important;
+}
+
+.site-background {
+  background-color: var(--background) !important;
+}

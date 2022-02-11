@@ -1,0 +1,63 @@
+<header [ngClass]="{'app-header-sm': hasSmallHeader,
+                            'app-header-lg': !hasSmallHeader}" class="app-header">
+  <div class="nav-main">
+    <div [class.brand-lg]="!hasSmallHeader" [class.brand-sm]="hasSmallHeader" class="brand">
+            <span class="seal">
+                <img [ngClass]="{'img-seal-sm': hasSmallHeader,
+                            'img-seal-lg': !hasSmallHeader}" alt="Defense Information Systems Agency"
+                     class="" src="../../../../../assets/images/DISA_Seal.png">
+            </span>
+
+      <span [class.app-title-lg]="!hasSmallHeader"
+            [class.app-title-sm]="hasSmallHeader"
+            class="app-title">
+                DISA Enterprise Architecture Data Platform (EADP)
+            </span>
+    </div>
+    <div class="nav-utility">
+      <img [ngClass]="{'img-logo-sm': hasSmallHeader,
+                            'img-logo-lg': !hasSmallHeader}" alt="Defense Information Systems Agency"
+           src="../../../../../assets/images/disa-logo.png">
+        <!--<div class="dropdown-avatar">
+          <app-generic-avatar [imgSrc]="avatarSrc" [isLoaded]="avatarIsLoaded" [name]="userProfile.firstName || ''"
+                              class="top-space"
+                              font="12"
+                              height="25"
+                              loadingBackgroundColor="#147B9D"
+                              style="margin-right:8px;" top="0" width="25"></app-generic-avatar>
+          <div class="top-space username truncateName">
+            {{ (userProfile.firstName | truncateUsernamePipe: userProfile.lastName)  }}
+          </div>
+          <div class="arrow-up"></div>
+          <div class="dropdown-avatar-content">
+            <ul class="ul-links">
+              <ng-container *ngFor="let section of navigations">
+                <li *ngIf="checkAccess(section) && section.userMenu" [routerLink]="section.href" draggable="false"
+                    id={{section.name}} routerLinkActive="active">
+                  <i #icon *ngIf='section.icon' [ngClass]='iconClasses(section)' aria-hidden="true"
+                     class="dropdown-icon"></i>
+                  <a>{{section.name}}
+                  </a>
+                </li>
+              </ng-container>
+            </ul>
+          </div>
+        </div>-->
+      </div>
+    </div>
+  <div class="overlay">
+    <ul class="overlay nav-secondary nav navbar-nav">
+      <li (click)="toggleNav()" *ngIf="hasNav" class="icon-wrapper">
+        <i [class.selectedIcon]="isOpen" aria-hidden="true" class="topbar-links fa fa-bars icon18"></i>
+      </li>
+      <ng-container *ngFor="let Xn of navigations">
+        <ng-container>
+          <li *ngIf="!Xn.userMenu" class="nav-bar-links">
+            <a [routerLink]="Xn.href" draggable="false" id={{Xn.name}} routerLinkActive="active" class="topbar-links">{{Xn.name}}
+            </a>
+          </li>
+        </ng-container>
+      </ng-container>
+    </ul>
+  </div>
+</header>
