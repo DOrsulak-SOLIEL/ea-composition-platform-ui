@@ -1,0 +1,464 @@
+.app-header {
+  // background: radial-gradient(circle at 1.98% 20.98%, #182848, transparent 100%), radial-gradient(circle at 98.02% 20.98%, #15a4fa, transparent 100%), radial-gradient(circle at 50% 50%, #0cc285, #0cc285 100%) !important;
+  background: radial-gradient(circle at 1.98% 20.98%, var(--bannerOneColor), transparent 100%), radial-gradient(circle at 98.02% 20.98%, var(--bannerTwoColor), transparent 100%), radial-gradient(circle at 50% 50%, var(--bannerThreeColor), var(--bannerFourColor) 100%) !important;
+  color: #fff;
+  vertical-align: middle;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.app-header-sm {
+  height: 45px;
+}
+
+.app-header-lg {
+  height: 90px;
+}
+
+/** App seal and title **/
+
+.brand {
+  float: left;
+  height: 100%;
+  vertical-align: middle;
+  display: table;
+}
+
+.brand-sm {
+  border-spacing: 0;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.brand-lg {
+  border-spacing: 10px 0;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.seal {
+  display: table-cell;
+  vertical-align: middle;
+  left: 0;
+  padding-left: 0;
+  margin-left: 0;
+
+  .img {
+    vertical-align: middle;
+  }
+}
+
+.img-seal-sm {
+  max-height: 30px;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.img-seal-lg {
+  max-height: 70px;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.img-logo-sm {
+  max-height: 30px;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.img-logo-lg {
+  max-height: 60px;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.app-title {
+  font-family: Muli, Roboto, "Helvetica Neue", sans-serif;
+  margin-top: 10px;
+  vertical-align: middle;
+  display: table-cell;
+}
+
+.app-title-sm {
+  padding-left: 20px;
+  font-size: 14px;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+.app-title-lg {
+  font-size: 20px;
+  transition: .6s; /* Adds a transition effect for header size */
+}
+
+/** Main Nav **/
+
+.nav-main {
+  // padding: 5px;
+  height: 100%;
+
+  &:after {
+    clear: both;
+    content: " ";
+    display: table;
+  }
+}
+
+.nav-utility {
+  float: right;
+  text-align: right;
+  padding-right: 15px;
+  line-height: 115px;
+  white-space: nowrap;
+  display: table;
+}
+
+.nav-login,
+.alfresco-search {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+/** Message Icon **/
+.msg-link {
+  max-width: 60px;
+  height: 30px;
+  margin-right: 5px;
+  margin-left: 5px;
+  position: relative;
+}
+
+.msg-link:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.notification-icon {
+  height: 30px;
+}
+
+.notification-icon:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.fa-bell {
+  color: rgb(233, 93, 62);
+  cursor: pointer;
+  font-size: 25px;
+  padding: 2px 2px 2px 0;
+}
+
+/** User **/
+
+.username {
+  display: inline-block;
+  font-size: 14px;
+  padding-right: 7px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.fa-user-circle-o {
+  font-size: 25px;
+  margin-right: 0;
+  padding-left: 5px;
+  padding-right: 0;
+  cursor: pointer;
+}
+
+.adf-userinfo-profile-image {
+  width: 25px;
+  height: 25px;
+  margin-top: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.img-avatar {
+  height: 25px;
+  width: 25px;
+  margin-top: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.top-space {
+  margin-top: 5px;
+}
+
+/** Secondary Nav **/
+.overlay {
+  width: 100%;
+  height: 40px;
+  background: radial-gradient(circle at 1.98% 20.98%, var(--bannerTwoColor), transparent 100%), radial-gradient(circle at 98.02% 20.98%, var(--bannerOneColor), transparent 100%), radial-gradient(circle at 50% 50%, var(--bannerThreeColor), var(--bannerFourColor) 100%) !important;
+}
+
+.nav-secondary {
+  // background: rgba(21, 32, 41, 0.6) !important;
+  background: var(--navBarOverlay) !important;
+  clear: both;
+  height: 40px !important;
+  line-height: 40px !important;
+  float: none;
+  text-align: left;
+  align-content: start;
+  alignment: left;
+  width: 100%;
+  margin: 0;
+  position: absolute;
+  white-space: nowrap !important;
+  overflow: hidden;
+
+  a {
+    color: var(--bannerTextColor);
+    display: inline-block;
+    margin: 0 !important;
+    line-height: 40px !important;
+    // font-size: 14px;
+    padding: 0 15px;
+    border-top: .5px solid transparent;
+    text-decoration: none !important;
+
+    /*    border-right: .5px solid transparent;
+        border-left: .5px solid transparent;*/
+
+    &.active,
+    &:hover {
+      background-color: var(--sidePanelTopColor);
+      color: var(--sidePanelTextColor);
+      text-decoration: none;
+      border-top: .5px solid var(--bannerTwoColor);
+    }
+
+    .disabled {
+      color: #afabab !important;
+      cursor: not-allowed;
+      font-weight: bold;
+      pointer-events: none;
+    }
+
+    li {
+      height: 36px;
+    }
+  }
+}
+
+.icon-wrapper {
+  // margin: 0;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  border: 0;
+  background: rgba(21, 32, 41, 0.4) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:active {
+    box-shadow: 1px 0px #9daeb9;
+    border: 1px #9daeb9;
+  }
+
+  &:hover > i {
+    color: #15a4fa;
+  }
+
+  i {
+    display: inline-block;
+    line-height: 40px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    vertical-align: bottom;
+    color: #15a4fa !important;
+  }
+}
+
+.icon18 {
+  font-size: 20px !important;
+  vertical-align: middle;
+}
+
+.selectedIcon {
+  color: var(--sidePanelTopColor) !important;
+
+  &:hover {
+    color: var(--sidePanelTextColor) !important;
+  }
+}
+
+
+.dropdown-avatar {
+  position: relative;
+  min-width: 110px;
+  height: 35px;
+  white-space: nowrap;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 200px;
+  margin-right: 5px;
+  padding-left: 5px;
+  line-height: 25px;
+  text-align: right;
+  align-self: end;
+  flex-direction: row-reverse;
+}
+
+.left-space {
+  margin-left: 15px !important;
+}
+
+.dropdown-avatar:hover {
+  background: rgba(0, 0, 0, 0.1);
+  // background-color: #0cc285;
+}
+
+.login-links {
+  padding: 10px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.hover-effect:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-avatar-content {
+  width: 100%;
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  border-radius: 0 2px 0 0;
+  margin-top: 35px;
+  margin-left: -5px;
+}
+
+.dropdown-avatar:hover .dropdown-avatar-content {
+  display: block;
+}
+
+.dropdown-avatar:hover .arrow-up {
+}
+
+.arrow-up {
+  display: none;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid white;
+  position: relative;
+  left: 106px;
+  margin-top: 1px;
+  z-index: 1;
+}
+
+.dropdown-avatar-content ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    padding-left: 7px;
+    cursor: pointer;
+
+    a {
+      text-align: left;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      text-decoration: none;
+      display: inline-block;
+    }
+  }
+}
+
+.dropdown-icon {
+  cursor: pointer;
+  text-align: center;
+  display: inline-block;
+  margin-right: 7px;
+}
+
+.ul-links {
+  vertical-align: middle;
+  text-align: left;
+  display: block;
+
+  a, svg {
+    color: #152029;
+  }
+}
+
+.ul-links :hover {
+  background-color: var(--bannerOneColor) !important;
+  color: var(--bannerTextColor);
+
+  a, svg {
+    color: var(--bannerTextColor);
+  }
+}
+
+.nav-bar-links {
+  display: inline-block;
+  color: var(--bannerTextColor);
+}
+
+.login-text {
+  height: 100%;
+  text-decoration: none;
+  color: white;
+  font-weight: 400;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.login-item-text {
+  padding-left: 15px;
+  text-decoration: none;
+  color: white;
+  font-weight: 400;
+  vertical-align: middle;
+}
+
+.truncateName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 40px;
+  max-width: 150px;
+  height: 100%;
+  padding-left: 5px;
+}
+
+.nav-login {
+  height: 35px;
+  line-height: 25px;
+  /*  height: 32px;
+    margin: 0;
+    position: absolute;
+    top: 50%;*/
+
+  .badge {
+    background-color: transparent;
+    border: 1px solid #fff;
+    font-size: 10px;
+    font-weight: normal;
+    margin-top: -10px;
+    padding: 2px;
+  }
+}
+
+.navbar-right {
+  float: right;
+}
+
+.navbar-nav {
+  display: flex;
+  flex-direction: column;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.nav {
+  flex-wrap: wrap;
+}
+
+.topbar-links {
+  font: 400 14px/20px Roboto, "Helvetica Neue", sans-serif;
+  letter-spacing: normal;
+}

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import * as shape from 'd3-shape';
 import { Edge, Node, ClusterNode, Layout } from '@swimlane/ngx-graph';
-import { nodes,  links } from './models/data';
+import { nodes,  links } from './shared/models/data';
 import { Subject } from 'rxjs';
-import {BlazegraphService} from "./services/blazegraph.service";
+import {BlazegraphService} from "./core/services/blazegraph.service";
 
 @Component({
   selector: 'app-root',

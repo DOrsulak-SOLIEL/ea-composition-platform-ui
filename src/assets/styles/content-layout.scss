@@ -1,0 +1,46 @@
+mat-sidenav-container {
+  position: absolute;
+  top: 130px;
+  bottom: 1px;
+}
+
+.sidenav-content {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+
+.mat-list .mat-list-item,
+.mat-nav-list .mat-list-item,
+.mat-selection-list .mat-list-item {
+  font-size: 14px;
+}
+
+h4 {
+  font-size: 15px;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  margin: 2px 0 16px;
+}
+
+.waiting-status {
+  position: relative;
+  top: 50%;
+  left: 30%;
+  font-weight: bold;
+}
+
+footer {
+  position: absolute;
+  bottom: 2px;
+  right: 15px;
+  left: 221px;
+  height: 30px;
+  padding: 6px 0 0 0;
+  color: #FFF;
+  font-weight: bold;
+  background-color: #63a0d4;
+  font-size: 13px;
+  text-align: center;
+  border-left: 2px solid rgba(99, 160, 212, 0.8);
+}
