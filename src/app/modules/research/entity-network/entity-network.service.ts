@@ -18,44 +18,59 @@ export class EntityNetworkService {
     return throwError(error || 'Server error');
   }
 
-  getNodes(): Observable<any> {
-    /*let apiURL = this.baseUrl + 'entityNetwork/entities';
-    return this.http.get(apiURL).pipe(catchError(EntityNetworkService.handleError));*/
-    const nodes = [
-      {
-        "id": "https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/Capability/123&source=gmail-imap&ust=1644931764000000&usg=AOvVaw24JoTwaOhdR9cCwUNU8-0x",
-        "name": "gddfgf",
-      },
-      {
-        "id": "https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/Capability/456&source=gmail-imap&ust=1644931764000000&usg=AOvVaw1hYJfY0IDE9F3VOB1N_H3r",
-        "name": "dfgdfgdfg",
-      }
-    ];
-    return of(nodes);
+  getNodes(id: string): Observable<any> {
+    let apiURL = this.baseUrl + 'entityNetwork/nodes?uri=' + id;
+    console.log(id);
+    return this.http.get(apiURL).pipe(catchError(EntityNetworkService.handleError));
+    /*    const nodes = [
+          {
+            "id": "https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/Capability/123&source=gmail-imap&ust=1644931764000000&usg=AOvVaw24JoTwaOhdR9cCwUNU8-0x",
+            "name": "gddfgf",
+          },
+          {
+            "id": "https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/Capability/456&source=gmail-imap&ust=1644931764000000&usg=AOvVaw1hYJfY0IDE9F3VOB1N_H3r",
+            "name": "dfgdfgdfg",
+          }
+        ];
+        return of(nodes);*/
   }
 
   getEntities(): Observable<any> {
-    const entities = [{
-      id: 'https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/Capability&source=gmail-imap&ust=1644931764000000&usg=AOvVaw30g_VmlUhyLzeFjpzmnTpd',
-      name: "Capability"
-    },
-      {
-        id: 'https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/System&source=gmail-imap&ust=1644931764000000&usg=AOvVaw2-RlXGgUukFT7E5mQoCum7',
-        name: "System"
-      },
-      {
-        id: 'https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/Service&source=gmail-imap&ust=1644931764000000&usg=AOvVaw2hJlaXm1hAWQtf49hgWhma',
-        name: "Service"
-      }
-    ];
-    return of(entities);
+    let apiURL = this.baseUrl + 'entityNetwork/entities';
+    return this.http.get(apiURL).pipe(catchError(EntityNetworkService.handleError));
+    /*    const entities = [{
+          id: 'https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/Capability&source=gmail-imap&ust=1644931764000000&usg=AOvVaw30g_VmlUhyLzeFjpzmnTpd',
+          name: "Capability"
+        },
+          {
+            id: 'https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/System&source=gmail-imap&ust=1644931764000000&usg=AOvVaw2-RlXGgUukFT7E5mQoCum7',
+            name: "System"
+          },
+          {
+            id: 'https://www.google.com/url?q=http://eadp.kg.local/ns/eadp/entity/Service&source=gmail-imap&ust=1644931764000000&usg=AOvVaw2hJlaXm1hAWQtf49hgWhma',
+            name: "Service"
+          }
+        ];
+        return of(entities);*/
   }
 
-  getNetwork() {
-    const network = {
+  getNetwork(id: string) {
+    let apiURL = this.baseUrl + 'entityNetwork/relationships?uri=' + id;
+    return this.http.get(apiURL).pipe(catchError(EntityNetworkService.handleError));
+/*    const network = {
       nodes: NodesTest,
       edges: EdgesTest
     };
-    return of(network);
+    return of(network);*/
   }
 }
+
+/*
+  edge:
+  from: testName,
+    to: "Project 1",
+  relation: "owns",
+  label: 'owns',
+  arrows: "to, from",
+  color: {color: "red"},
+},*/

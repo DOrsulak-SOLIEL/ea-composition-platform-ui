@@ -36,7 +36,63 @@ code {
 }
 
 .grid-area {
-  background-color: var(--cardContentColor);
-  border-style: dotted;
-  border-color: var(--cardOutline);
+  background-color: var(--cardContentColor) !important;
+  border-style: dotted !important;
+  border-color: var(--cardOutline) !important;
+}
+
+.grid-area-with-side-panel {
+  border-left: 0 solid !important;
+}
+
+.content-color {
+  background-color: var(--sidePanelTopColor) !important;
+}
+
+.example-container {
+  height: 300px;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+}
+
+.example-sidenav-content {
+  display: flex !important;
+  height: 100% !important;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.example-sidenav {
+  padding: 20px;
+}
+
+
+.black-text {
+  color: black;
+}
+
+.side-panel {
+  width: 100px;
+}
+
+.side-panel-color {
+  background-color: #e3ece3 !important;
+}
+
+.circle {
+  background: #fcc;
+  padding: 0;
+  width: 20px; /** fix width ***/
+  height: 20px; /** fix width ***/
+  text-align: center;
+  display: inline;
+  border-radius: 50%;
+  line-height: 20px; /** for vertical center - if needed **/
+}
+
+button {
+  border-width: 0;
+  border-style: none;
+  background-color: inherit;
+  margin: 0;
 }

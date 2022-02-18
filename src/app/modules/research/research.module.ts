@@ -5,7 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 import {NgModule} from '@angular/core';
 import {UIWidgetsModule} from '../../shared/components/ui-widgets/ui-widgets.module';
-import {WaitingStatusModule} from './../../shared/components/waiting-status/waiting-status.module';
+import {WaitingStatusModule} from '../../shared/components/waiting-status/waiting-status.module';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatTableModule} from '@angular/material/table';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -17,6 +17,8 @@ import {EaTableModule} from '../../shared/components/ui-widgets/ea-table/ea-tabl
 import {EntityNetworkComponent} from "./entity-network/entity-network.component";
 import {EntityNetworkService} from "./entity-network/entity-network.service";
 import {ThemeModule} from "../../shared/common/theme";
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {NavigationModule} from "../../shared/components/layout/navigations/navigation.module";
 
 @NgModule({
   imports: [
@@ -34,7 +36,9 @@ import {ThemeModule} from "../../shared/common/theme";
     MatIconModule,
     MatPaginatorModule,
     EaTableModule,
-    ThemeModule
+    ThemeModule,
+    MatSidenavModule,
+    NavigationModule
   ],
   declarations: [
     EntityNetworkComponent,

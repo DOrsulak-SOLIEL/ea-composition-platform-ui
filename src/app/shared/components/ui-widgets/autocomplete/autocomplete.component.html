@@ -6,7 +6,7 @@
            [(ngModel)]="selectedValue"
            [clearable]="false"
            [closeOnSelect]="!multiple"
-           [disabled]="disabled"
+           [disabled]="disabled || isDisabled"
            [items]="choicesLoaded"
            [loading]="loading"
            [multiple]="multiple"

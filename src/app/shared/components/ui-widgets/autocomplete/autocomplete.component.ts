@@ -44,8 +44,12 @@ export class AutocompleteComponent implements OnInit, OnChanges, OnDestroy {
   bufferSize = 300;
   numberOfItemsFromEndBeforeFetchingMore = 100;
   loading = false;
+  isDisabled = false;
 
   constructor() {
+    if (this.disabled) {
+      this.isDisabled = true;
+    }
   }
 
   ngOnDestroy(): void {
@@ -104,6 +108,10 @@ export class AutocompleteComponent implements OnInit, OnChanges, OnDestroy {
     this.useBuffer ? this.choicesLoaded = this.choices.slice(0, this.bufferSize) :
       this.choicesLoaded = this.choices;
     this.filteredChoicesNum = this.choices.length;
+    if (this.filteredChoicesNum > 0) {
+      this.isDisabled = false;
+    }
+
   }
 
   setPlaceholder(): void {

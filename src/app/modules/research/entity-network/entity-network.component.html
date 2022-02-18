@@ -10,9 +10,9 @@
       <app-autocomplete
         id="entityOption"
         class="col-sm-4"
-        (selectedChange)="entityChange()"
-        [(selected)]="formValues.entity.value"
-        [choicesArray]="formValues.entity.filteredOptions"
+        (selectedChange)="entityChange($event)"
+        [(selected)]="entityValue"
+        [choicesArray]="entityOptions"
         [placeholderText]="'Select Entity...'"
         [primaryKey]="'id'"
         [useBuffer]="false"
@@ -24,20 +24,21 @@
         </ng-template>
       </app-autocomplete>
     </div>
-    <div class="simple-row">
+    <div class="simple-row" *ngIf="entityValue && nodeOptions && nodeOptions.length >= 0">
       <label for="entityOption"
              class=" control-label" style="line-height: 33px; font-size: 16px">Node:
       </label>
       <app-autocomplete
-        id="entityOption"
+        id="nodeOption"
         class="col-sm-4"
-        (selectedChange)="nodeChange()"
-        [(selected)]="formValues.node.value"
-        [choicesArray]="formValues.node.filteredOptions"
+        (selectedChange)="nodeChange($event)"
+        [(selected)]="nodeValue"
+        [choicesArray]="nodeOptions"
         [placeholderText]="'Select Node...'"
         [primaryKey]="'id'"
         [useBuffer]="false"
-        bindLabel="id"
+        [disabled]="!entityValue || !nodeOptions || nodeOptions.length <= 1"
+        bindLabel="name"
         style="max-width: 220px !important;"
       >
         <ng-template let-item>
@@ -45,28 +46,68 @@
         </ng-template>
       </app-autocomplete>
     </div>
+    <div class="simple-row " style="height: 55vh; width: 100%;">
+      <div (mouseenter)="drawer.open()" *ngIf="network"
+           style="height: 100%; width: 40px;" class="side-panel-color"><i
+        aria-hidden="true"
+        class="fa fa-bars"
+        style="width: 35px; margin-top: 10px;font-size: 18px;"
+      ></i></div>
+      <mat-drawer-container class="example-container grid-area content-color" autosize hasBackdrop="false"
+                            [class.grid-area-with-side-panel]="network"
+                            style="height: 100%; width: 85%;">
+        <mat-drawer #drawer class="example-sidenav black-text side-panel-color" mode="over"
+                    style="padding-top: 7px;">
+          <h4 class="black-text row">Display Controls:</h4>
+          <div class="simple-row" style="width: 100%;">
+            <label for="displayType" class="" style="width: 85px;margin-top: 5px;">Display Type:</label>
+            <select [(ngModel)]="displayType" id="displayType" class=""
+                    style="width: 100px;"
+                    name="displayType" (ngModelChange)="startNetwork({nodes: this.nodes, edges: this.edges})">
+              <option value="">Select...</option>
+              <option value="standard">Standard</option>
+              <option value="hierarchical">Hierarchical</option>
+            </select>
+          </div>
+
+          <div class="simple-row" style="width: 100%; margin-top: 10px;">
+            <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Node Type:</label>
+            <select [(ngModel)]="nodeType" id="nodeType"
+                    style="width: 100px;"
+                    class=""
+                    name="nodeType" (ngModelChange)="startNetwork({nodes: this.nodes, edges: this.edges})">
+              <option value="">Select...</option>
+              <option value="circle">Circle</option>
+              <option value="ellipse">Ellipse</option>
+              <option value="box">Box</option>
+              <option value="database">Database</option>
+              <option value="dot">Dot</option>
+              <option value="star">Star</option>
+            </select>
+          </div>
+
+          <div class="simple-row" style="width: 100%; margin-top: 10px;">
+            <label style="width: 85px;">Node Size:</label>
+            <button (click)="onDecreaseNodeSize()" [disabled]="nodeSize <= 40 || nodeSizeDisabled" class="right"><i
+              aria-hidden="true"
+              class="fa fa-minus-circle"
+              style="width: 20px; font-size: 20px;color: red; margin-top: -5px;"
+            ></i></button>
+            <button (click)="onIncreaseNodeSize()" [disabled]="nodeSize >= 105 || nodeSizeDisabled"
+                    class=" pull-right"><i
+              aria-hidden="true"
+              class="fa fa-plus-circle"
+              style="width: 20px; font-size: 20px;color: green; margin-top: -5px;"
+            ></i></button>
+          </div>
+        </mat-drawer>
+
+        <div class="example-sidenav-content content-color" (mouseenter)="drawer.close()">
+          <div #myEntityNetwork id="myEntityNetwork" style="height: 100%;">
+          </div>
+        </div>
+
+      </mat-drawer-container>
+    </div>
   </div>
-  <div class="simple-row">
-    <label for="entityOption"
-           class=" control-label" style="line-height: 33px; font-size: 16px">Type:
-    </label>
-    <app-autocomplete
-      id="typeOption"
-      class="col-sm-4"
-      (selectedChange)="typeChange($event)"
-      [(selected)]="formValues.type.value"
-      [choicesArray]="formValues.type.filteredOptions"
-      [placeholderText]="'Select Type...'"
-      [primaryKey]="'id'"
-      [useBuffer]="false"
-      bindLabel="id"
-      style="max-width: 220px !important;"
-    >
-      <ng-template let-item>
-        <div>{{item.name}}&nbsp;</div>
-      </ng-template>
-    </app-autocomplete>
-  </div>
-  <div #myEntityNetwork id="myEntityNetwork"
-       style="height: 65vh; width: 100%;" class="grid-area"></div>
 </div>

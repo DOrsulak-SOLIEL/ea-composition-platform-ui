@@ -84,6 +84,10 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "browserTarget": "ea-app:build"
+          },
           "configurations": {
             "production": {
               "browserTarget": "ea-blazegraph-ui:build:production"

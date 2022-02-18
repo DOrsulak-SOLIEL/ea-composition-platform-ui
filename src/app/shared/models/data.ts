@@ -1,4 +1,4 @@
-import { Edge, Node, ClusterNode } from '@swimlane/ngx-graph';
+import {Edge, Node, ClusterNode} from '@swimlane/ngx-graph';
 
 export const nodes: Node[] = [
   {
@@ -12,7 +12,7 @@ export const nodes: Node[] = [
     id: '3',
     label: 'activity:Communicate Strategic Decisions/Information'
   },
- ];
+];
 
 /*export const clusters: ClusterNode[] = [
   {
@@ -38,30 +38,30 @@ export const links: Edge[] = [
 
 export const testAPIResponse = {
   head: {
-    vars: [ 'childrendArtifact' , 'name' , 'description' ]
+    vars: ['childrendArtifact', 'name', 'description']
   },
   results: {
     bindings: [
       {
-        childrendArtifact: { "type": "uri" , "value": "http://eadp.KG.local:9082/ns/eadp#activity:2" } ,
-        name: { "type": "literal" , "value": "Communicate Strategic Decisions/Information" } ,
-        description: { "type": "literal" , "value": "To send and receive strategic decisions" }
+        childrendArtifact: {"type": "uri", "value": "http://eadp.KG.local:9082/ns/eadp#activity:2"},
+        name: {"type": "literal", "value": "Communicate Strategic Decisions/Information"},
+        description: {"type": "literal", "value": "To send and receive strategic decisions"}
       },
       {
-        childrendArtifact: { "type": "uri" , "value": "http://eadp.KG.local:9082/ns/eadp#segment:3" } ,
-        name: { "type": "literal" , "value": "Mobility" } ,
-        description: { "type": "literal" , "value": "TBD" }
+        childrendArtifact: {"type": "uri", "value": "http://eadp.KG.local:9082/ns/eadp#segment:3"},
+        name: {"type": "literal", "value": "Mobility"},
+        description: {"type": "literal", "value": "TBD"}
       }
     ]
   }
 }
 
 export const SPNodes = [
-  { id: 1, label: "Eric Cartman", age: "kid", gender: "male" },
-  { id: 2, label: "Stan Marsh", age: "kid", gender: "male" },
-  { id: 3, label: "Wendy Testaburger", age: "kid", gender: "female" },
-  { id: 4, label: "Mr Mackey", age: "adult", gender: "male" },
-  { id: 'Sharon Marsh', label: "Sharon Marsh", age: "adult", gender: "female" },
+  {id: 1, label: "Eric Cartman", age: "kid", gender: "male"},
+  {id: 2, label: "Stan Marsh", age: "kid", gender: "male"},
+  {id: 3, label: "Wendy Testaburger", age: "kid", gender: "female"},
+  {id: 4, label: "Mr Mackey", age: "adult", gender: "male"},
+  {id: 'Sharon Marsh', label: "Sharon Marsh", age: "adult", gender: "female"},
 ];
 
 export const SPEdges = [
@@ -71,7 +71,7 @@ export const SPEdges = [
     relation: "friend",
     label: 'friend',
     arrows: "to, from",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: 1,
@@ -79,7 +79,7 @@ export const SPEdges = [
     relation: "friend",
     label: 'friend',
     arrows: "to, from",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: 2,
@@ -87,7 +87,7 @@ export const SPEdges = [
     relation: "friend",
     label: 'friend',
     arrows: "to, from",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: 'Sharon Marsh',
@@ -95,7 +95,7 @@ export const SPEdges = [
     relation: "parent",
     label: 'parent',
     arrows: "to",
-    color: { color: "green" },
+    color: {color: "green"},
   },
   {
     from: 4,
@@ -103,7 +103,7 @@ export const SPEdges = [
     relation: "teacher",
     label: 'teacher',
     arrows: "to",
-    color: { color: "blue" },
+    color: {color: "blue"},
   },
   {
     from: 4,
@@ -111,7 +111,7 @@ export const SPEdges = [
     relation: "teacher",
     label: 'teacher',
     arrows: "to",
-    color: { color: "blue" },
+    color: {color: "blue"},
   },
   {
     from: 4,
@@ -119,37 +119,42 @@ export const SPEdges = [
     relation: "teacher",
     label: 'teacher',
     arrows: "to",
-    color: { color: "blue" },
+    color: {color: "blue"},
   },
 ];
 
 export const NodesTest = [
-  { id: "Organization 1", label: "Organization 1", type: "organization", color: {background: 'red'} },
-  { id: "Project 1", label: "Project 1", type:"project", color: {background: 'orange'} },
-  { id: "Project 2", label: "Project 2", type: "project", color: {background: 'orange'}, hidden: false },
-  { id: "Objective 1", label: "Objective 1", type: "objective", color: {background: 'blue'} },
-  { id: "Objective 2", label: "Objective 2", type: "objective", color: {background: 'blue'} },
-  { id: "Objective 3", label: "Objective 3", type: "objective", color: {background: 'blue'} },
-  { id: "Objective 4", label: "Objective 4", type: "objective", color: {background: 'blue'} },
-  { id: "Capability 1", label: "Capability 1", type: "capability", color: {background: 'yellow'}},
-  { id: "Capability 2", label: "Capability 2", type: "objective", color: {background: 'yellow'} },
-  { id: "Taxonomy 1", label: "Taxonomy 1", type: "taxonomy", color: {background: 'purple'} },
-  { id: "Taxonomy 2", label: "Taxonomy 2", type: "taxonomy", color: {background: 'purple'}},
-  { id: "Service 1", label: "Service 1", type: "service", color: {background: 'green'} },
-  { id: "Service 2", label: "Service 2", type: "service", color: {background: 'green'} },
-  { id: "Service 3", label: "Service 3", type: "service", color: {background: 'green'} },
-  { id: "System 1", label: "System 1", type: "system", color: {background: 'green'} },
-  { id: "System 2", label: "System 2", type: "system", color: {background: 'green'} }
+  {
+    id: "Organization 1",
+    name: "Organization 1",
+    type: "organization",
+    color: {background: 'red'}
+  },
+  {id: "Project 1", name: "Project 1", type: "project", color: {background: 'orange'}},
+  {id: "Project 2", name: "Project 2", type: "project", color: {background: 'orange'}, hidden: false},
+  {id: "Objective 1", name: "Objective 1", type: "objective", color: {background: 'blue'}},
+  {id: "Objective 2", name: "Objective 2", type: "objective", color: {background: 'blue'}},
+  {id: "Objective 3", name: "Objective 3", type: "objective", color: {background: 'blue'}},
+  {id: "Objective 4", name: "Objective 4", type: "objective", color: {background: 'blue'}},
+  {id: "Capability 1", name: "Capability 1", type: "capability", color: {background: 'yellow'}},
+  {id: "Capability 2", name: "Capability 2", type: "objective", color: {background: 'yellow'}},
+  {id: "Taxonomy 1", name: "Taxonomy 1", type: "taxonomy", color: {background: 'purple'}},
+  {id: "Taxonomy 2", name: "Taxonomy 2", type: "taxonomy", color: {background: 'purple'}},
+  {id: "Service 1", name: "Service 1", type: "service", color: {background: 'green'}},
+  {id: "Service 2", name: "Service 2", type: "service", color: {background: 'green'}},
+  {id: "Service 3", name: "Service 3", type: "service", color: {background: 'green'}},
+  {id: "System 1", name: "System 1", type: "system", color: {background: 'green'}},
+  {id: "System 2", name: "System 2", type: "system", color: {background: 'green'}}
 ];
 
- export const EdgesTest = [
+export const EdgesTest = [
   {
     from: "Organization 1",
     to: "Project 1",
     relation: "owns",
     label: 'owns',
     arrows: "to, from",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: "Organization 1",
@@ -157,7 +162,7 @@ export const NodesTest = [
     relation: "owns",
     label: 'owns',
     arrows: "to",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: "Organization 1",
@@ -165,7 +170,7 @@ export const NodesTest = [
     relation: "owns",
     label: 'owns',
     arrows: "to",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: "Organization 1",
@@ -173,7 +178,7 @@ export const NodesTest = [
     relation: "owns",
     label: 'owns',
     arrows: "to",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: "Organization 1",
@@ -181,7 +186,7 @@ export const NodesTest = [
     relation: "has",
     label: 'has',
     arrows: "to",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: "Organization 1",
@@ -189,7 +194,7 @@ export const NodesTest = [
     relation: "owns",
     label: 'owns',
     arrows: "to",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: "Organization 1",
@@ -197,7 +202,7 @@ export const NodesTest = [
     relation: "owns",
     label: 'owns',
     arrows: "to",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: "Organization 1",
@@ -205,7 +210,7 @@ export const NodesTest = [
     relation: "owns",
     label: 'owns',
     arrows: "to",
-    color: { color: "red" },
+    color: {color: "red"},
   },
   {
     from: "Project 1",
@@ -213,7 +218,7 @@ export const NodesTest = [
     relation: "has",
     label: 'has',
     arrows: "to",
-    color: { color: "orange" },
+    color: {color: "orange"},
   },
   {
     from: "Project 1",
@@ -221,7 +226,7 @@ export const NodesTest = [
     relation: "has",
     label: 'has',
     arrows: "to",
-    color: { color: "orange" },
+    color: {color: "orange"},
   },
   {
     from: "Project 2",
@@ -229,7 +234,7 @@ export const NodesTest = [
     relation: "has",
     label: 'has',
     arrows: "to",
-    color: { color: "orange" },
+    color: {color: "orange"},
   },
   {
     from: "Project 2",
@@ -237,7 +242,7 @@ export const NodesTest = [
     relation: "has",
     label: 'has',
     arrows: "to",
-    color: { color: "orange" },
+    color: {color: "orange"},
   },
   {
     from: "Capability 1",
@@ -245,7 +250,7 @@ export const NodesTest = [
     relation: "satisfies",
     label: 'satisfies',
     arrows: "to",
-    color: { color: "yellow" },
+    color: {color: "yellow"},
   },
   {
     from: "Capability 1",
@@ -253,7 +258,7 @@ export const NodesTest = [
     relation: "satisfies",
     label: 'satisfies',
     arrows: "to",
-    color: { color: "yellow" },
+    color: {color: "yellow"},
   },
   {
     from: "Capability 2",
@@ -261,7 +266,7 @@ export const NodesTest = [
     relation: "satisfies",
     label: 'satisfies',
     arrows: "to",
-    color: { color: "yellow" },
+    color: {color: "yellow"},
   },
   {
     from: "Capability 2",
@@ -269,7 +274,7 @@ export const NodesTest = [
     relation: "satisfies",
     label: 'satisfies',
     arrows: "to",
-    color: { color: "yellow" },
+    color: {color: "yellow"},
   },
   {
     from: "Taxonomy 1",
@@ -277,7 +282,7 @@ export const NodesTest = [
     relation: "depends on",
     label: 'depends on',
     arrows: "to",
-    color: { color: "purple" },
+    color: {color: "purple"},
   },
   {
     from: "Taxonomy 2",
@@ -285,7 +290,7 @@ export const NodesTest = [
     relation: "depends on",
     label: 'depends on',
     arrows: "to",
-    color: { color: "purple" },
+    color: {color: "purple"},
   },
   {
     from: "Service 1",
@@ -293,7 +298,7 @@ export const NodesTest = [
     relation: "provides",
     label: 'provides',
     arrows: "to",
-    color: { color: "green" },
+    color: {color: "green"},
   },
   {
     from: "Service 2",
@@ -301,7 +306,7 @@ export const NodesTest = [
     relation: "provides",
     label: 'provides',
     arrows: "to",
-    color: { color: "green" },
+    color: {color: "green"},
   },
   {
     from: "Service 3",
@@ -309,7 +314,7 @@ export const NodesTest = [
     relation: "provides",
     label: 'provides',
     arrows: "to",
-    color: { color: "green" },
+    color: {color: "green"},
   },
   {
     from: "System 1",
@@ -317,7 +322,7 @@ export const NodesTest = [
     relation: "implements",
     label: 'implements',
     arrows: "to",
-    color: { color: "green" },
+    color: {color: "green"},
   },
   {
     from: "System 1",
@@ -325,7 +330,7 @@ export const NodesTest = [
     relation: "implements",
     label: 'implements',
     arrows: "to",
-    color: { color: "green" },
+    color: {color: "green"},
   },
   {
     from: "System 2",
@@ -333,5 +338,5 @@ export const NodesTest = [
     relation: "implements",
     label: 'implements',
     arrows: "to",
-    color: { color: "green" },
+    color: {color: "green"},
   }];

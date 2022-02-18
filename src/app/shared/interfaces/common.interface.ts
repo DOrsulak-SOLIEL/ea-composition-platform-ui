@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { SortDirection } from '@angular/material/sort';
+import {Component, Input} from '@angular/core';
+import {SortDirection} from '@angular/material/sort';
 
 export type predicate = () => boolean;
 
@@ -171,14 +171,120 @@ export interface IIconUIState {
 }
 
 export interface IDropdownEntityState {
-  selected?: boolean;
   id: number | string;
-  code: string;
-  description: string;
+  name?: string;
+  code?: string;
+  description?: string;
   value?: string | null;
   entityDescription?: string | null;
   label?: string;
   options?: any;
-  filteredOptions?: any;
+  filteredOptions?: IDropdownEntityState[];
   action?: string;
+  selected?: boolean;
+  level?: number;
+  color?: string;
 }
+
+export interface IDropdownEntityStateItem {
+  id: string;
+  name: string;
+}
+
+export enum networkColors {
+  '#541675',
+  '#2f4b7c',
+  '#d45087',
+  '#2F9599',
+  '#99CCED',
+  '#005B96',
+  '#665191',
+  '#9C89FF',
+  '#f95d6a',
+  '#A9216B',
+  '#ff7c43',
+  '#ffa600',
+  '#a05195',
+  '#ED1B4C',
+  '#F26A44',
+  '#F6DB68',
+  '#A8A8A8',
+  '#CD537C',
+  '#E7185C',
+  '#494949',
+  '#363636',
+  '#c1eec8',
+  '#A163F7',
+  '#65A8C4',
+  '#6F88FC',
+  '#0F6BAE',
+  '#725A7A',
+  '#C56D86',
+  '#FF7582',
+  '#27B6AF',
+  '#15a4fa',
+  '#004159',
+  '#45E3FF',
+  '#00C590',
+  '#CAB9F1',
+  '#974EC3',
+  '#248BD6',
+  '#83B8FF',
+  '#C6CDFF',
+  '#355C7D',
+  '#5E4DAB',
+  '#F57DBA',
+  '#C2508B',
+  '#413BF7',
+  '#81CBF8',
+  '#00ADCE',
+}
+
+let dfsddf = [
+  '#541675',
+  '#2f4b7c',
+  '#a05195',
+  '#d45087',
+  '#2F9599',
+  '#99CCED',
+  '#005B96',
+  '#665191',
+  '#9C89FF',
+  '#f95d6a',
+  '#A9216B',
+  '#ff7c43',
+  '#ffa600',
+  '#ED1B4C',
+  '#F26A44',
+  '#F6DB68',
+  '#A8A8A8',
+  '#CD537C',
+  '#E7185C',
+  '#494949',
+  '#363636',
+  '#c1eec8',
+  '#A163F7',
+  '#65A8C4',
+  '#6F88FC',
+  '#0F6BAE',
+  '#725A7A',
+  '#C56D86',
+  '#FF7582',
+  '#27B6AF',
+  '#15a4fa',
+  '#004159',
+  '#45E3FF',
+  '#00C590',
+  '#CAB9F1',
+  '#974EC3',
+  '#248BD6',
+  '#83B8FF',
+  '#C6CDFF',
+  '#355C7D',
+  '#5E4DAB',
+  '#F57DBA',
+  '#C2508B',
+  '#413BF7',
+  '#81CBF8',
+  '#00ADCE',
+]
