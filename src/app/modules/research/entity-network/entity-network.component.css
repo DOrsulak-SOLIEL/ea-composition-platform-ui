@@ -76,7 +76,10 @@ code {
 }
 
 .side-panel-color {
+  /*
   background-color: #e3ece3 !important;
+  */
+  background-color: #E3EEF5 !important;
 }
 
 .circle {
