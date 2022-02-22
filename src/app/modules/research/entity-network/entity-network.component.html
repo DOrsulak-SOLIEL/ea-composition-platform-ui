@@ -57,8 +57,8 @@
                             [class.grid-area-with-side-panel]="network"
                             style="height: 100%; width: 85%;">
         <mat-drawer #drawer class="example-sidenav black-text side-panel-color" mode="over"
-                    style="padding-top: 7px;">
-          <h4 class="black-text row">Display Controls:</h4>
+                    style="padding-top: 37px;">
+          <h4 class="black-text row" style="font-weight: bold;">Display Controls:</h4>
           <div class="simple-row" style="width: 100%;">
             <label for="displayType" class="" style="width: 85px;margin-top: 5px;">Display Type:</label>
             <select [(ngModel)]="displayType" id="displayType" class=""
@@ -91,13 +91,13 @@
             <button (click)="onDecreaseNodeSize()" [disabled]="nodeSize <= 40 || nodeSizeDisabled" class="right"><i
               aria-hidden="true"
               class="fa fa-minus-circle"
-              style="width: 20px; font-size: 20px;color: red; margin-top: -5px;"
+              style="width: 20px; font-size: 20px;color: #B23E3E; margin-top: -5px;"
             ></i></button>
             <button (click)="onIncreaseNodeSize()" [disabled]="nodeSize >= 105 || nodeSizeDisabled"
                     class=" pull-right"><i
               aria-hidden="true"
               class="fa fa-plus-circle"
-              style="width: 20px; font-size: 20px;color: green; margin-top: -5px;"
+              style="width: 20px; font-size: 20px;color: #328E32; margin-top: -5px;"
             ></i></button>
           </div>
         </mat-drawer>
