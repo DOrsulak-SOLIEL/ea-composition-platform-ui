@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'ea-blazegraph-ui'`, () => {
+  it(`should have as title 'ead-platform-ui'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('ea-blazegraph-ui');
+    expect(app.title).toEqual('ead-platform-ui');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('ea-blazegraph-ui app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('ead-platform-ui app is running!');
   });
 });
