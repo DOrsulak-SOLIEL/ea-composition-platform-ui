@@ -4,6 +4,8 @@
     "secure": false,
     "pathRewrite": {
       "^/ea-data-service/api": ""
-    }
+    },
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }
