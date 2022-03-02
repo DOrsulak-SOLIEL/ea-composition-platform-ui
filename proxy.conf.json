@@ -1,9 +1,9 @@
 {
-  "/ea-data-service/api/*": {
-    "target": "http://disa-eap.soliel.local:8444/ea-data-service/api/",
+  "/ead-data-service/api/*": {
+    "target": "http://disa-eap.soliel.local:8444/ead-data-service/api/",
     "secure": false,
     "pathRewrite": {
-      "^/ea-data-service/api": ""
+      "^/ead-data-service/api": ""
     },
     "changeOrigin": true,
     "logLevel": "debug"
