@@ -1,2 +1,2 @@
 // Environmental constants
-export const BASE_API_URL = 'ea-data-service/api/';
+export const BASE_API_URL = 'ead-data-service/api/';
