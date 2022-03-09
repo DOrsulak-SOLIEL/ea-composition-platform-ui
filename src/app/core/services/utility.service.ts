@@ -1,13 +1,13 @@
 import * as I from '../../shared/interfaces/common.interface';
 
-import { Observable, throwError } from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 
-import { ConfirmModalComponent } from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.modal.component';
-import { HttpClient } from '@angular/common/http';
-import { IDropdownEntityState } from './../../shared/interfaces/common.interface';
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { catchError } from 'rxjs/operators';
+import {ConfirmModalComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.modal.component';
+import {HttpClient} from '@angular/common/http';
+import {IDropdownEntityState} from '../../shared/interfaces/common.interface';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {catchError} from 'rxjs/operators';
 
 @Injectable()
 export class AppUtilityService {
@@ -268,5 +268,9 @@ export class AppUtilityService {
       Date.UTC(sinceDate.getFullYear(), sinceDate.getMonth(), sinceDate.getDate())) / (1000 * 60 * 60 * 24)) - 1;
     const returnTime = (daysSince >= 0 ? daysSince : 0) + ' days ago';
     return returnTime;
+  }
+
+  capitalizeFirstLetter(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
   }
 }

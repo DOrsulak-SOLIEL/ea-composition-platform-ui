@@ -47,7 +47,7 @@
       </app-autocomplete>
     </div>
     <div class="simple-row " style="height: 55vh; width: 100%;">
-      <div (mouseenter)="drawer.open()" *ngIf="network"
+      <div (mouseenter)="drawer.open();" *ngIf="network"
            style="height: 100%; width: 40px;" class="side-panel-color"><i
         aria-hidden="true"
         class="fa fa-bars"
@@ -63,14 +63,14 @@
             <label for="displayType" class="" style="width: 85px;margin-top: 5px;">Display Type:</label>
             <select [(ngModel)]="displayType" id="displayType" class=""
                     style="width: 100px;"
-                    name="displayType" (ngModelChange)="startNetwork({nodes: this.nodes, edges: this.edges})">
-              <option value="">Select...</option>
+                    name="displayType" (ngModelChange)="viewChange($event)">
               <option value="standard">Standard</option>
               <option value="hierarchical">Hierarchical</option>
+              <option value="plane">Plane</option>
             </select>
           </div>
 
-          <div class="simple-row" style="width: 100%; margin-top: 10px;">
+          <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType !== 'plane'">
             <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Node Type:</label>
             <select [(ngModel)]="nodeType" id="nodeType"
                     style="width: 100px;"
@@ -86,25 +86,117 @@
             </select>
           </div>
 
-          <div class="simple-row" style="width: 100%; margin-top: 10px;">
+          <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType === 'plane'">
+            <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Line Type:</label>
+            <select [(ngModel)]="curveType" id="curveType"
+                    (ngModelChange)="setInterpolationType($event)"
+                    style="width: 100px;"
+                    class=""
+                    name="curveType">
+              <option value="">Select...</option>
+              <option *ngFor="let curveType of interpolationTypes">{{curveType}}</option>
+            </select>
+          </div>
+
+          <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType === 'plane'">
+            <button class="btn btn-primary" style="line-height: 20px;"
+                    (click)="center$.next(true)">
+              Center
+            </button>
+            <button class="btn btn-secondary" style="line-height: 30px; vertical-align: center"
+                    (click)="zoomToFit$.next(true)">
+              Zoom to fit
+            </button>
+          </div>
+
+          <div class="simple-row" *ngIf="displayType !== 'plane'" style="margin-top: 15px;">
             <label style="width: 85px;">Node Size:</label>
-            <button (click)="onDecreaseNodeSize()" [disabled]="nodeSize <= 40 || nodeSizeDisabled" class="right"><i
+            <button (click)="onDecreaseNodeSize()" [disabled]="nodeSize <= 40 || nodeSizeDisabled"
+                    class="right disabled-button button-icon"><i
               aria-hidden="true"
-              class="fa fa-minus-circle"
+              class="fa fa-minus-circle disabled-btn-color"
               style="width: 20px; font-size: 20px;color: #B23E3E; margin-top: -5px;"
             ></i></button>
             <button (click)="onIncreaseNodeSize()" [disabled]="nodeSize >= 105 || nodeSizeDisabled"
-                    class=" pull-right"><i
+                    class=" pull-right disabled-button button-icon"><i
               aria-hidden="true"
-              class="fa fa-plus-circle"
+              class="fa fa-plus-circle disabled-btn-color"
               style="width: 20px; font-size: 20px;color: #328E32; margin-top: -5px;"
             ></i></button>
           </div>
         </mat-drawer>
 
-        <div class="example-sidenav-content content-color" (mouseenter)="drawer.close()">
-          <div #myEntityNetwork id="myEntityNetwork" style="height: 100%;">
+        <div class="example-sidenav-content content-color" (mouseenter)="drawer.close();">
+          <div #myEntityNetwork id="myEntityNetwork"
+               [class.show]="displayType !== 'plane'"
+               [class.no-show]="displayType === 'plane'">
           </div>
+          <ngx-graph
+            [class.show]="displayType === 'plane'"
+            [class.no-show]="displayType !== 'plane'"
+            [links]="edgesNGX"
+            [nodes]="nodesNGX"
+            [clusters]="clusters"
+            [layout]="layout"
+            [curve]="curve"
+            [draggingEnabled]="draggingEnabled"
+            [panningEnabled]="panningEnabled"
+            [enableZoom]="zoomEnabled"
+            [zoomSpeed]="zoomSpeed"
+            [minZoomLevel]="minZoomLevel"
+            [maxZoomLevel]="maxZoomLevel"
+            [panOnZoom]="panOnZoom"
+            [autoZoom]="autoZoom"
+            [autoCenter]="autoCenter"
+            [update$]="update$"
+            [center$]="center$"
+            [zoomToFit$]="zoomToFit$"
+
+          >
+            <ng-template #defsTemplate>
+              <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4"
+                          orient="auto">
+                <svg:path d="M0,-5L10,0L0,5" class="arrow-head"/>
+              </svg:marker>
+            </ng-template>
+
+            <ng-template #clusterTemplate let-cluster>
+              <svg:g class="node cluster" [attr.width]="cluster.dimension.width + 20"
+                     [attr.height]="cluster.dimension.height">
+                <svg:rect x="5" y="5" [attr.width]="cluster.dimension.width + 20"
+                          [attr.height]="cluster.dimension.height"
+                          [attr.fill]="cluster.data.planeColor || cluster.data.color">
+                </svg:rect>
+                <text font-family="Verdana" font-size="50" fill="#2f4b7c" font-weight="bold"
+                      [attr.width]="cluster.dimension.width + 20" [attr.x]="(cluster.dimension.width + 20) / 2" y="42"
+                      dominant-baseline="middle"
+                      text-anchor="middle"
+                >{{cluster.label}}</text>
+              </svg:g>
+            </ng-template>
+
+            <ng-template #nodeTemplate let-node>
+              <svg:g class="node">
+                <svg:rect [attr.width]="node.dimension.width + 16" [attr.height]="node.dimension.height + 4"
+                          [attr.fill]="node.color || node.data.customColor || node.data.color"/>
+                <text alignment-baseline="central" [attr.x]="10"
+                      [attr.y]="node.dimension.height / 2" fill="white" font-size="35">{{node.label}}</text>
+              </svg:g>
+            </ng-template>
+
+            <ng-template #linkTemplate let-link>
+              <svg:g class="edge">
+                <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
+                </svg:path>
+                <svg:text class="edge-label" text-anchor="middle">
+                  <textPath class="text-path" [attr.href]="'#' + link.id" font-size="30"
+                            [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
+                    {{link.label}}
+                  </textPath>
+                </svg:text>
+              </svg:g>
+            </ng-template>
+          </ngx-graph>
         </div>
 
       </mat-drawer-container>

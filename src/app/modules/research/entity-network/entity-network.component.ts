@@ -7,17 +7,21 @@ import {
   ViewChild
 } from '@angular/core';
 import {Network, Options} from 'vis-network/standalone';
-import {NodesTest} from "../../../shared/models/data";
+import {EdgesTest, NodesTest} from "../../../shared/models/data";
 import {EntityNetworkService} from "./entity-network.service";
 import {
   IDropdownEntityState,
   networkColors
 } from "../../../shared/interfaces/common.interface";
+import {Subject} from "rxjs";
+import {ClusterNode, Layout} from "@swimlane/ngx-graph";
+import * as shape from 'd3-shape';
+import {AppUtilityService} from "../../../core/services/utility.service";
 
 @Component({
   selector: 'entry-network',
   templateUrl: './entity-network.component.html',
-  styleUrls: ['./entity-network.component.css']
+  styleUrls: ['./entity-network.component.scss']
 })
 
 export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -25,6 +29,8 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
 
   nodes: any[] = [];
   edges: any[] = [];
+  nodesNGX: any[] = [];
+  edgesNGX: any[] = [];
   errMsg = '';
 
   network: any;
@@ -35,16 +41,50 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   nodeValue: IDropdownEntityState = {id: '', name: ''};
   nodeOptions: IDropdownEntityState[] = [];
 
-  typeValue: IDropdownEntityState = {id: '', name: ''};
   typeOptions: IDropdownEntityState[] = [];
   displayType = 'standard';
   nodeType = 'circle';
-  preparedData: any;
   nodeSize = 80;
   nodeFontSize = 12;
   nodeSizeDisabled = false;
+  bisLoadingData = false;
 
-  constructor(private entityNetworkService: EntityNetworkService) {
+  layout: string | Layout = 'dagreCluster';
+  clusters: ClusterNode[] | any[] = [];
+
+  // line interpolation
+  curveType: string = 'Bundle';
+  curve: any = shape.curveMonotoneY; // shape.curveLinear;
+  interpolationTypes = [
+    'Bundle',
+    'Cardinal',
+    'Catmull Rom',
+    'Linear',
+    'Monotone X',
+    'Monotone Y',
+    'Natural',
+    'Step',
+    'Step After',
+    'Step Before'
+  ];
+
+  draggingEnabled: boolean = true;
+  panningEnabled: boolean = true;
+  zoomEnabled: boolean = true;
+
+  zoomSpeed: number = 0.1;
+  minZoomLevel: number = 0.1;
+  maxZoomLevel: number = 4.0;
+  panOnZoom: boolean = true;
+
+  autoZoom: boolean = true;
+  autoCenter: boolean = true;
+
+  update$: Subject<boolean> = new Subject();
+  center$: Subject<boolean> = new Subject();
+  zoomToFit$: Subject<boolean> = new Subject();
+
+  constructor(private entityNetworkService: EntityNetworkService, private utilService: AppUtilityService) {
   }
 
   ngAfterViewInit() {
@@ -59,11 +99,19 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
       this.network.destroy();
       this.network = null;
     }
+  }
 
+  clearData() {
+    this.edgesNGX = [];
+    this.nodesNGX = [];
+    this.clusters = [];
+    this.nodes = [];
+    this.edges = [];
   }
 
   ngOnDestroy(): void {
     this.destroy();
+    this.clearData();
   }
 
   getEntities(): void {
@@ -71,6 +119,7 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
         next: (resp) => {
           this.errMsg = '';
           this.entityOptions = resp;
+          // this.center$.next(true);
         },
         error: (err) => {
           this.errMsg = (err.statusText ? err.statusText + ': ' : '') + (err.error?.message ||
@@ -81,6 +130,14 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getNodes(): void {
+    // to test with test data, you can uncomment below
+    /*    this.nodeValue = {id: NodesTest[0].id, name: NodesTest[0].id};
+        let preparedData = this.configureData({nodes: NodesTest, edges: EdgesTest});
+        this.edges = preparedData.edges;
+        this.nodes = preparedData.nodes;
+        this.edgesNGX = JSON.parse(JSON.stringify(this.edges));
+        this.nodesNGX = JSON.parse(JSON.stringify(this.nodes));*/
+    this.startNetwork({nodes: this.nodes, edges: this.edges});
     this.entityNetworkService.getNodes(this.entityValue.id.toString()).subscribe({
         next: (resp) => {
           this.errMsg = '';
@@ -97,6 +154,7 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   getNetwork(): void {
     this.entityNetworkService.getNetwork(this.nodeValue.id.toString()).subscribe({
         next: (resp: any) => {
+          console.log(resp);
           this.errMsg = '';
           this.typeOptions = [{
             id: 'All',
@@ -109,6 +167,8 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
           if (preparedData && preparedData.edges && preparedData.edges.length > 0 && preparedData.nodes && preparedData.nodes.length > 0) {
             this.edges = preparedData.edges;
             this.nodes = preparedData.nodes;
+            this.edgesNGX = JSON.parse(JSON.stringify(this.edges));
+            this.nodesNGX = JSON.parse(JSON.stringify(this.nodes));
             this.startNetwork({nodes: this.nodes, edges: this.edges});
           }
         },
@@ -126,6 +186,7 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
     this.nodeValue = {id: '', name: ''};
     this.nodeOptions = [{id: '', name: ''}];
     this.destroy();
+    this.clearData();
     if (this.entityValue.id) {
       this.getNodes();
     }
@@ -134,6 +195,7 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   // called on user node dropdown selection
   nodeChange(event: IDropdownEntityState): void {
     this.destroy();
+    this.clearData();
     this.nodeValue = event;
     if (this.entityValue.id && this.nodeValue.id) {
       this.getNetwork();
@@ -208,8 +270,10 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
         };
       }
       this.network = null;
-      this.network = new Network(container.nativeElement, data, options);
-      this.network.stabilize();
+      if (container) {
+        this.network = new Network(container.nativeElement, data, options);
+        this.network.stabilize();
+      }
       /*      this.network.on("click", (e: any) => {
               let idKey = e.nodes[0];
               this.toggleNodeVisibility(idKey);
@@ -290,76 +354,135 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
           index === self.findIndex((t: any) => (
             t.place === value.place && t.id === value.id
           ))
-      )
+      );
 
+      // update node array with required library properties
       if (data && data.nodes) {
         data.nodes = data.nodes.map((node: any) => {
-          if (node && node.name) {
-            return {
-              ...node,
-              label: node.name,
-              level: 0,
-              color: ''
-            }
-          } else if (node && node.id === this.nodeValue.id) {
-            // backend returns incorrect parent node, need to overwrite it here:
+          // for plane view, add clusters
+          const existingClusterIndex = this.clusters.findIndex(cluster => cluster.id === node.type);
+
+          if (node && node.type && existingClusterIndex >= 0) {
+            this.clusters[existingClusterIndex].childNodeIds?.push(node.id);
+          } else {
+            const length = this.clusters.length + 1;
+            this.clusters.push({
+              id: node.type,
+              label: this.utilService.capitalizeFirstLetter(node.type) + ' Plane',
+              childNodeIds: [node.id],
+              data: {color: '', rx: length * 200, ry: 200}
+            });
+            this.clusters[this.clusters.length - 1].data.planeColor = this.getPlaneColor(node.type);
+          }
+          // for standard view
+          // if top level node
+          if (node && node.id === this.nodeValue.id) {
+            // if top level node
             return {
               ...node,
               ...this.nodeValue,
+              name: this.nodeValue.name,
               level: 1,
-              color: this.getColorFromLevel(1)
+              label: this.nodeValue.name || node.name || node.id,
+              levelColor: this.getColorFromLevel(1),
+              color: this.getColorFromPlane(node.type)
+            }
+          } else if (node && node.id) {
+            return {
+              ...node,
+              level: 0,
+              label: node.name || node.id,
+              levelColor: this.getColorFromLevel(0),
+              color: this.getColorFromPlane(node.type)
             }
           }
         });
       }
-
+      console.log(this.clusters);
       if (data && data.edges) {
         data.edges = data.edges.map((edge: any) => (
           {
             ...edge,
             label: edge.relation,
-            arrows: "to"
+            arrows: "to",
+            source: edge.from,
+            target: edge.to
           }));
       }
-      this.preparedData = data;
       this.nodeValue.level = 1;
-      this.nodeValue.color = this.getColorFromLevel(1);
-      this.updateEdgesRelated(this.nodeValue);
-      console.log(data);
-      return data;
+      return this.updateEdgesRelated(this.nodeValue, data);
     }
   }
 
-  updateEdgesRelated(parentNode: any) {
+  updateEdgesRelated(parentNode: any, data: any): any {
     // find edges with from === parentNode.id
-    const edgesFromParent = this.preparedData.edges.filter((edge: any) => edge.from === parentNode.id);
+    const edgesFromParent = data.edges.filter((edge: any) => edge.from === parentNode.id);
     // for each parent edge
     edgesFromParent.forEach((edge: any) => {
       // find node for edge, find to node and update level, then seatch edges from == to node id
-      const nodeOfEdgeIndex = this.preparedData.nodes.findIndex(((obj: any) => obj.id === edge.to));
+      const nodeOfEdgeIndex = data.nodes.findIndex(((obj: any) => obj.id === edge.to));
       if (nodeOfEdgeIndex > -1) {
-        this.preparedData.nodes[nodeOfEdgeIndex].level = (parentNode.level || 0) + 1;
-        this.preparedData.nodes[nodeOfEdgeIndex].color = this.getColorFromLevel((parentNode.level || 0) + 1);
-        console.log('updating node level: ' + this.preparedData.nodes[nodeOfEdgeIndex].name);
+        data.nodes[nodeOfEdgeIndex].level = (parentNode.level || 0) + 1;
+        data.nodes[nodeOfEdgeIndex].levelColor = this.getColorFromLevel((parentNode.level || 0) + 1);
+        data.nodes[nodeOfEdgeIndex].color = this.getColorFromPlane(data.nodes[nodeOfEdgeIndex].type);
       }
-      const childEdges = this.preparedData.edges.filter(((obj: any) => obj.from === edge.to));
-      console.log(edge.to);
+      const childEdges = data.edges.filter(((obj: any) => obj.from === edge.to));
+      const parentEdges = data.edges.filter(((obj: any) => obj.to === edge.from)); // find any missed edges from the parent
+
       // update their level
       if (childEdges && childEdges.length > 0) {
         childEdges.forEach((edge: any) => {
-          const childNodeIndex = this.preparedData.nodes.findIndex(((obj: any) => obj.id === edge.to));
-          if (this.preparedData.nodes[childNodeIndex].level === 0) {
-            this.preparedData.nodes[childNodeIndex].level = (parentNode.level || 0) + 2;
-            this.preparedData.nodes[childNodeIndex].color = this.getColorFromLevel((parentNode.level || 0) + 2);
-            console.log('calling related edges for: ' + this.preparedData.nodes[childNodeIndex].name);
-            console.log('calling related edges for: ' + this.preparedData.nodes[childNodeIndex]);
-            this.updateEdgesRelated(this.preparedData.nodes[childNodeIndex]);
+          const childNodeIndex = data.nodes.findIndex(((obj: any) => obj.id === edge.to));
+          if (data.nodes[childNodeIndex].level === 0) {
+            data.nodes[childNodeIndex].level = (parentNode.level || 0) + 2;
+            data.nodes[childNodeIndex].levelColor = this.getColorFromLevel((parentNode.level || 0) + 2);
+            data.nodes[childNodeIndex].color = this.getColorFromPlane(data.nodes[childNodeIndex].type);
+            // console.log('calling related edges for: ' + data.nodes[childNodeIndex].name);
+            // console.log('calling related edges for: ' + data.nodes[childNodeIndex]);
+            return this.updateEdgesRelated(data.nodes[childNodeIndex], data);
           }
         });
       }
     });
 
+    // so far we have updated the level for all nodes that flow down from the main node,
+    // however some nodes may only flow upstream. Here will locate these isolated nodes and assign level + 1 from parent level
+    // data = this.setUpstreamNodeLevels(data);
+    console.log(data);
+    return data;
   }
+
+  /*  setUpstreamNodeLevels(data: any): any {
+      const unaccountedNodes = data.nodes.filter(((obj: any) => obj.level === 0));
+      console.log(unaccountedNodes);
+      unaccountedNodes.forEach((node: any) => {
+        const nodeIndex = data.nodes.findIndex(((obj: any) => obj.id === node.id));
+        data.nodes[nodeIndex] = {
+          ...node,
+          level: this.getLevel(0, node, data)
+        }
+        console.log(data.nodes[nodeIndex]);
+      });
+      return data;
+    }
+
+    getLevel(level: number, node: any, data: any): number {
+      // const parentEdges = edges.filter(((obj: any) => obj.to === node.id));
+      const edgesFromParent = data.edges.filter((edge: any) => edge.from === node.id);
+      if (edgesFromParent && edgesFromParent.length > 0) {
+        let level = 0;
+        edgesFromParent.forEach((edge: any) => {
+          const parentIndex = data.nodes.findIndex(((obj: any) => obj.id === edge.to));
+          if (parentIndex && parentIndex >= 0 && data.nodes[parentIndex].level > 0) {
+            console.log('returning level: ' + data.nodes[parentIndex].level);
+            level = data.nodes[parentIndex].level;
+          }
+        });
+        return level;
+      }
+      console.log('returning level 0 :(');
+      return 0;
+    }*/
 
   onDecreaseNodeSize(): void {
     if (!this.nodeSizeDisabled) {
@@ -395,8 +518,70 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
+
+  getPlaneColor(plane: string): string {
+    const planeIndex = this.clusters.findIndex(((obj: any) => obj.id === plane));
+    const planeNodeColor = <any>networkColors[planeIndex];
+    return this.adjustColor(planeNodeColor, 50);
+  }
+
+  getColorFromPlane(plane: string): string {
+    const planeIndex = this.clusters.findIndex(((obj: any) => obj.id === plane));
+    console.log(planeIndex);
+    return <any>networkColors[planeIndex];
+  }
+
   getColorFromLevel(level: number): string {
     return <any>networkColors[level - 1];
   }
 
+  viewChange(change: any): void {
+    this.bisLoadingData = true;
+    if (this.displayType !== 'plane') {
+      this.startNetwork({nodes: this.nodes, edges: this.edges});
+      this.network.fit();
+    } else {
+      this.update$.next(true);
+      this.center$.next(true);
+      this.bisLoadingData = false;
+    }
+  }
+
+  adjustColor(color: string, amount: number): string {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+  }
+
+  setInterpolationType(curveType: string) {
+    this.curveType = curveType;
+    if (curveType === 'Bundle') {
+      this.curve = shape.curveBundle.beta(1);
+    }
+    if (curveType === 'Cardinal') {
+      this.curve = shape.curveCardinal;
+    }
+    if (curveType === 'Catmull Rom') {
+      this.curve = shape.curveCatmullRom;
+    }
+    if (curveType === 'Linear') {
+      this.curve = shape.curveLinear;
+    }
+    if (curveType === 'Monotone X') {
+      this.curve = shape.curveMonotoneX;
+    }
+    if (curveType === 'Monotone Y') {
+      this.curve = shape.curveMonotoneY;
+    }
+    if (curveType === 'Natural') {
+      this.curve = shape.curveNatural;
+    }
+    if (curveType === 'Step') {
+      this.curve = shape.curveStep;
+    }
+    if (curveType === 'Step After') {
+      this.curve = shape.curveStepAfter;
+    }
+    if (curveType === 'Step Before') {
+      this.curve = shape.curveStepBefore;
+    }
+  }
 }
