@@ -57,9 +57,7 @@ code {
 .example-sidenav-content {
   display: flex !important;
   height: 100% !important;
-
-  align-items: center;
-  justify-content: center;
+  width: 100% !important;
 }
 
 .example-sidenav {
@@ -93,9 +91,31 @@ code {
   line-height: 20px; /** for vertical center - if needed **/
 }
 
-button {
+.button-icon {
   border-width: 0;
   border-style: none;
   background-color: inherit;
   margin: 0;
+}
+
+.no-show {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.show {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.disabled-button:disabled {
+  .disabled-btn-color {
+    color: dimgrey !important;
+  }
 }

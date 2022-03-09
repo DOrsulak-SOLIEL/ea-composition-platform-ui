@@ -19,27 +19,29 @@ import {EntityNetworkService} from "./entity-network/entity-network.service";
 import {ThemeModule} from "../../shared/common/theme";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {NavigationModule} from "../../shared/components/layout/navigations/navigation.module";
+import {NgxGraphModule} from "@swimlane/ngx-graph";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    ResearchRoutingModule,
-    MatCardModule,
-    UIWidgetsModule,
-    WaitingStatusModule,
-    FormsModule,
-    MatGridListModule,
-    MatTableModule,
-    MatFormFieldModule,
-    MatSortModule,
-    MatButtonModule,
-    MatIconModule,
-    MatPaginatorModule,
-    EaTableModule,
-    ThemeModule,
-    MatSidenavModule,
-    NavigationModule
-  ],
+    imports: [
+        CommonModule,
+        ResearchRoutingModule,
+        MatCardModule,
+        UIWidgetsModule,
+        WaitingStatusModule,
+        FormsModule,
+        MatGridListModule,
+        MatTableModule,
+        MatFormFieldModule,
+        MatSortModule,
+        MatButtonModule,
+        MatIconModule,
+        MatPaginatorModule,
+        EaTableModule,
+        ThemeModule,
+        MatSidenavModule,
+        NavigationModule,
+        NgxGraphModule
+    ],
   declarations: [
     EntityNetworkComponent,
   ],

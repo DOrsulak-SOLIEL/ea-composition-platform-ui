@@ -495,8 +495,10 @@ i {
 }
 
 .btn-primary {
-  background-color: var(--primaryButtonColor);
-  color: var(--primaryButtonText);
+  background-color: var(--primaryButtonColor) !important;
+  color: var(--primaryButtonText) !important;
+  border-color: #fff !important;
+  padding: 0 10px 0 10px !important;
 }
 
 .btn-primary:disabled {
@@ -505,10 +507,9 @@ i {
 }
 
 .btn-primary:hover, .btn-primary:active {
-  background-color: var(--primaryButtonColor);
-  color: var(--primaryButtonText);
-  filter: brightness(85%);
-  box-shadow: 0 0 0 1px rgba(91, 194, 194, 0.5) !important;
+  background-color: var(--primaryButtonColor) !important;
+  color: var(--primaryButtonText) !important;
+  filter: brightness(85%) !important;
 }
 
 .btn-primary:focus, .btn-secondary:focus {
@@ -516,15 +517,17 @@ i {
 }
 
 .btn-secondary {
-  background-color: var(--secondaryButtonColor);
-  color: var(--secondaryButtonText);
+  background-color: var(--secondaryButtonColor) !important;
+  color: var(--secondaryButtonText) !important;
+  border-color: #fff !important;
+  padding: 0 10px 0 10px !important;
 }
 
 .btn-secondary:hover, .btn-secondary:active {
-  background-color: var(--secondaryButtonColor);
-  color: var(--secondaryButtonText);
-  filter: brightness(85%);
-  box-shadow: 0 0 0 1px rgba(91, 194, 194, 0.5) !important;
+  background-color: var(--secondaryButtonColor) !important;
+  color: var(--secondaryButtonText) !important;
+  filter: brightness(85%) !important;
+  border-color: #fff !important;
 }
 
 .ea-portal-secondary-btn {

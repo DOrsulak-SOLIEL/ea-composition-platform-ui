@@ -243,7 +243,6 @@ export enum networkColors {
 let dfsddf = [
   '#541675',
   '#2f4b7c',
-  '#a05195',
   '#d45087',
   '#2F9599',
   '#99CCED',
@@ -254,6 +253,7 @@ let dfsddf = [
   '#A9216B',
   '#ff7c43',
   '#ffa600',
+  '#a05195',
   '#ED1B4C',
   '#F26A44',
   '#F6DB68',
