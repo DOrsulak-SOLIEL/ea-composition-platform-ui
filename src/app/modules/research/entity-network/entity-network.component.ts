@@ -134,13 +134,13 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
 
   getNodes(): void {
     // to test with test data, you can uncomment below
-    this.nodeValue = {id: NodesTest[0].id, name: NodesTest[0].id};
-    let preparedData = this.configureData({nodes: NodesTest, edges: EdgesTest});
-    this.edges = preparedData.edges;
-    this.nodes = preparedData.nodes;
-    this.edgesNGX = JSON.parse(JSON.stringify(this.edges));
-    this.nodesNGX = JSON.parse(JSON.stringify(this.nodes));
-    this.startNetwork({nodes: this.nodes, edges: this.edges});
+    /*    this.nodeValue = {id: NodesTest[0].id, name: NodesTest[0].id};
+        let preparedData = this.configureData({nodes: NodesTest, edges: EdgesTest});
+        this.edges = preparedData.edges;
+        this.nodes = preparedData.nodes;
+        this.edgesNGX = JSON.parse(JSON.stringify(this.edges));
+        this.nodesNGX = JSON.parse(JSON.stringify(this.nodes));
+        this.startNetwork({nodes: this.nodes, edges: this.edges});*/
     this.entityNetworkService.getNodes(this.entityValue.id.toString()).subscribe({
         next: (resp) => {
           this.errMsg = '';
