@@ -35,10 +35,11 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
 
   network: any;
 
-  entityValue: IDropdownEntityState = {id: '', name: ''};
+  entityValue: IDropdownEntityState = {id: '', name: '', type: ''};
   entityOptions: IDropdownEntityState[] = [];
 
-  nodeValue: IDropdownEntityState = {id: '', name: ''};
+  activeNode = {};
+  nodeValue: IDropdownEntityState = {id: '', name: '', type: ''};
   nodeOptions: IDropdownEntityState[] = [];
 
   typeOptions: IDropdownEntityState[] = [];
@@ -48,6 +49,7 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   nodeFontSize = 12;
   nodeSizeDisabled = false;
   bisLoadingData = false;
+  nodeNavHistory: IDropdownEntityState[] = [];
 
   layout: string | Layout = 'dagreCluster';
   clusters: ClusterNode[] | any[] = [];
@@ -83,6 +85,7 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   update$: Subject<boolean> = new Subject();
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
+  showSidenavText = false;
 
   constructor(private entityNetworkService: EntityNetworkService, private utilService: AppUtilityService) {
   }
@@ -131,14 +134,13 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
 
   getNodes(): void {
     // to test with test data, you can uncomment below
-    /*    this.nodeValue = {id: NodesTest[0].id, name: NodesTest[0].id};
-        let preparedData = this.configureData({nodes: NodesTest, edges: EdgesTest});
-        this.edges = preparedData.edges;
-        this.nodes = preparedData.nodes;
-        this.edgesNGX = JSON.parse(JSON.stringify(this.edges));
-        this.nodesNGX = JSON.parse(JSON.stringify(this.nodes));
-        this.startNetwork({nodes: this.nodes, edges: this.edges});
-        */
+    this.nodeValue = {id: NodesTest[0].id, name: NodesTest[0].id};
+    let preparedData = this.configureData({nodes: NodesTest, edges: EdgesTest});
+    this.edges = preparedData.edges;
+    this.nodes = preparedData.nodes;
+    this.edgesNGX = JSON.parse(JSON.stringify(this.edges));
+    this.nodesNGX = JSON.parse(JSON.stringify(this.nodes));
+    this.startNetwork({nodes: this.nodes, edges: this.edges});
     this.entityNetworkService.getNodes(this.entityValue.id.toString()).subscribe({
         next: (resp) => {
           this.errMsg = '';
@@ -155,7 +157,6 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   getNetwork(): void {
     this.entityNetworkService.getNetwork(this.nodeValue.id.toString()).subscribe({
         next: (resp: any) => {
-          console.log(resp);
           this.errMsg = '';
           this.typeOptions = [{
             id: 'All',
@@ -164,8 +165,21 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
           this.getUniques(NodesTest).forEach((type: string) => {
             this.typeOptions.push({id: type, name: type});
           });
+          if (!resp || !resp.nodes || resp.nodes.length === 0) {
+            const nodes = [{
+              id: this.nodeValue.id,
+              name: this.nodeValue.name,
+              type: this.entityValue.name
+            }]
+            resp = {
+              nodes,
+              edges: []
+            }
+          }
           let preparedData = this.configureData(resp);
-          if (preparedData && preparedData.edges && preparedData.edges.length > 0 && preparedData.nodes && preparedData.nodes.length > 0) {
+          if (preparedData && preparedData.nodes && preparedData.nodes.length > 0) {
+            // we use ngx library for plane view and visjs for everything else.
+            // both libraries need their own data set
             this.edges = preparedData.edges;
             this.nodes = preparedData.nodes;
             this.edgesNGX = JSON.parse(JSON.stringify(this.edges));
@@ -184,8 +198,8 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   // called on user entity dropdown selection
   entityChange(event: IDropdownEntityState): void {
     this.entityValue = event;
-    this.nodeValue = {id: '', name: ''};
-    this.nodeOptions = [{id: '', name: ''}];
+    this.nodeValue = {id: '', name: '', type: ''};
+    this.nodeOptions = [{id: '', name: '', type: ''}];
     this.destroy();
     this.clearData();
     if (this.entityValue.id) {
@@ -194,10 +208,14 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   // called on user node dropdown selection
-  nodeChange(event: IDropdownEntityState): void {
+  nodeChange(event: IDropdownEntityState, isGoBack = false): void {
     this.destroy();
     this.clearData();
     this.nodeValue = event;
+    if (this.nodeValue && this.nodeValue.id && !isGoBack && (!this.nodeNavHistory || this.nodeNavHistory.length === 0 || this.nodeNavHistory[this.nodeNavHistory.length - 1].id !== this.nodeValue.id)) {
+      this.nodeValue.type = this.entityValue.name;
+      this.nodeNavHistory.push(this.nodeValue);
+    }
     if (this.entityValue.id && this.nodeValue.id) {
       this.getNetwork();
     }
@@ -275,10 +293,21 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
         this.network = new Network(container.nativeElement, data, options);
         this.network.stabilize();
       }
-      /*      this.network.on("click", (e: any) => {
-              let idKey = e.nodes[0];
-              this.toggleNodeVisibility(idKey);
-            });*/
+      this.bisLoadingData = false;
+      this.zoomToFit$.next(true);
+      this.zoomToFit$.next(true);
+      this.network.on("doubleClick", (params: any) => {
+        if (params && params.nodes && params.nodes.length >= 1) {
+          const nodeIndex = this.nodes.findIndex(node => node.id === params.nodes[0]);
+          if (this.entityValue.name !== this.nodes[nodeIndex].type) {
+            const entityIndex = this.entityOptions.findIndex(((obj: any) => obj.name === this.nodes[nodeIndex].type));
+            if (entityIndex && entityIndex !== -1) {
+              this.entityValue = this.entityOptions[entityIndex];
+            }
+          }
+          this.nodeChange(this.nodes[nodeIndex]);
+        }
+      });
       this.nodeSizeDisabled = false;
     }
   }
@@ -399,7 +428,6 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
           }
         });
       }
-      console.log(this.clusters);
       if (data && data.edges) {
         data.edges = data.edges.map((edge: any) => (
           {
@@ -411,79 +439,38 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
           }));
       }
       this.nodeValue.level = 1;
-      return this.updateEdgesRelated(this.nodeValue, data);
+      return this.updateAllEdgesRelated(this.nodeValue, data);
     }
   }
 
-  updateEdgesRelated(parentNode: any, data: any): any {
-    // find edges with from === parentNode.id
-    const edgesFromParent = data.edges.filter((edge: any) => edge.from === parentNode.id);
-    // for each parent edge
-    edgesFromParent.forEach((edge: any) => {
-      // find node for edge, find to node and update level, then seatch edges from == to node id
-      const nodeOfEdgeIndex = data.nodes.findIndex(((obj: any) => obj.id === edge.to));
-      if (nodeOfEdgeIndex > -1) {
-        data.nodes[nodeOfEdgeIndex].level = (parentNode.level || 0) + 1;
-        data.nodes[nodeOfEdgeIndex].levelColor = this.getColorFromLevel((parentNode.level || 0) + 1);
-        data.nodes[nodeOfEdgeIndex].color = this.getColorFromPlane(data.nodes[nodeOfEdgeIndex].type);
-      }
-      const childEdges = data.edges.filter(((obj: any) => obj.from === edge.to));
-      const parentEdges = data.edges.filter(((obj: any) => obj.to === edge.from)); // find any missed edges from the parent
+  updateAllEdgesRelated(parentNode: any, data: any): any {
+    const edgesFromParent = data.edges.filter((edge: any) => (edge.from === parentNode.id) || (edge.to === parentNode.id));
+    let arryOfEdgeNodes: any[] = [];
 
-      // update their level
-      if (childEdges && childEdges.length > 0) {
-        childEdges.forEach((edge: any) => {
-          const childNodeIndex = data.nodes.findIndex(((obj: any) => obj.id === edge.to));
-          if (data.nodes[childNodeIndex].level === 0) {
-            data.nodes[childNodeIndex].level = (parentNode.level || 0) + 2;
-            data.nodes[childNodeIndex].levelColor = this.getColorFromLevel((parentNode.level || 0) + 2);
-            data.nodes[childNodeIndex].color = this.getColorFromPlane(data.nodes[childNodeIndex].type);
-            // console.log('calling related edges for: ' + data.nodes[childNodeIndex].name);
-            // console.log('calling related edges for: ' + data.nodes[childNodeIndex]);
-            return this.updateEdgesRelated(data.nodes[childNodeIndex], data);
-          }
-        });
+    // we need a list of nodes the parent touches
+    edgesFromParent.forEach((edge: any) => {
+      let childNodeId = '';
+      if (edge.to !== parentNode.id) {
+        childNodeId = edge.to;
+      } else {
+        childNodeId = edge.from;
       }
+      const nodeIndex = data.nodes.findIndex(((obj: any) => obj.id === childNodeId));
+
+      arryOfEdgeNodes.push(data.nodes[nodeIndex]);
     });
 
-    // so far we have updated the level for all nodes that flow down from the main node,
-    // however some nodes may only flow upstream. Here will locate these isolated nodes and assign level + 1 from parent level
-    // data = this.setUpstreamNodeLevels(data);
-    console.log(data);
+    // lets check if the parent node level is
+    arryOfEdgeNodes.forEach((childNode: any) => {
+      if (childNode && childNode.level === 0 || childNode.level > parentNode.level + 1) {
+        const childIndex = data.nodes.findIndex(((obj: any) => obj.id === childNode.id));
+        data.nodes[childIndex].level = parentNode.level + 1;
+        childNode.level = parentNode.level + 1;
+        return this.updateAllEdgesRelated(childNode, data);
+      }
+    });
     return data;
   }
-
-  /*  setUpstreamNodeLevels(data: any): any {
-      const unaccountedNodes = data.nodes.filter(((obj: any) => obj.level === 0));
-      console.log(unaccountedNodes);
-      unaccountedNodes.forEach((node: any) => {
-        const nodeIndex = data.nodes.findIndex(((obj: any) => obj.id === node.id));
-        data.nodes[nodeIndex] = {
-          ...node,
-          level: this.getLevel(0, node, data)
-        }
-        console.log(data.nodes[nodeIndex]);
-      });
-      return data;
-    }
-
-    getLevel(level: number, node: any, data: any): number {
-      // const parentEdges = edges.filter(((obj: any) => obj.to === node.id));
-      const edgesFromParent = data.edges.filter((edge: any) => edge.from === node.id);
-      if (edgesFromParent && edgesFromParent.length > 0) {
-        let level = 0;
-        edgesFromParent.forEach((edge: any) => {
-          const parentIndex = data.nodes.findIndex(((obj: any) => obj.id === edge.to));
-          if (parentIndex && parentIndex >= 0 && data.nodes[parentIndex].level > 0) {
-            console.log('returning level: ' + data.nodes[parentIndex].level);
-            level = data.nodes[parentIndex].level;
-          }
-        });
-        return level;
-      }
-      console.log('returning level 0 :(');
-      return 0;
-    }*/
 
   onDecreaseNodeSize(): void {
     if (!this.nodeSizeDisabled) {
@@ -528,7 +515,6 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
 
   getColorFromPlane(plane: string): string {
     const planeIndex = this.clusters.findIndex(((obj: any) => obj.id === plane));
-    console.log(planeIndex);
     return <any>networkColors[planeIndex];
   }
 
@@ -583,6 +569,43 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     if (curveType === 'Step Before') {
       this.curve = shape.curveStepBefore;
+    }
+  }
+
+  navBackNode() {
+    if (this.nodeNavHistory && this.nodeNavHistory.length && this.nodeNavHistory.length >= 1) {
+      // the most recently added history is current node, so remove that from history
+      this.nodeNavHistory.pop();
+
+      // now set node
+      if (this.nodeNavHistory && this.nodeNavHistory.length && this.nodeNavHistory.length >= 1) {
+        if (this.entityValue.name !== this.nodeNavHistory[this.nodeNavHistory.length - 1].type) {
+          const entityIndex = this.entityOptions.findIndex(((obj: any) => obj.name === this.nodeNavHistory[this.nodeNavHistory.length - 1].type));
+          if (entityIndex >= 0) {
+            this.entityValue = this.entityOptions[entityIndex];
+          }
+        }
+        this.nodeChange(this.nodeNavHistory[this.nodeNavHistory.length - 1], true);
+      }
+    }
+  }
+
+  ngxNodeDoubleClick(nodeDbl: any): void {
+    this.zoomToFit$.next(true);
+    this.bisLoadingData = true;
+    this.edgesNGX = [];
+    this.nodesNGX = [];
+    this.clusters = [];
+
+    if (nodeDbl && nodeDbl.id) {
+      const nodeIndex = this.nodes.findIndex(node => node.id === nodeDbl.id);
+      if (this.entityValue.name !== this.nodes[nodeIndex].type) {
+        const entityIndex = this.entityOptions.findIndex(((obj: any) => obj.name === this.nodes[nodeIndex].type));
+        if (entityIndex && entityIndex !== -1) {
+          this.entityValue = this.entityOptions[entityIndex];
+        }
+      }
+      this.nodeChange(this.nodes[nodeIndex]);
     }
   }
 }
