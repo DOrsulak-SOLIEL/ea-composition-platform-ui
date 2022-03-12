@@ -184,6 +184,7 @@ export interface IDropdownEntityState {
   selected?: boolean;
   level?: number;
   color?: string;
+  type?: string;
 }
 
 export interface IDropdownEntityStateItem {

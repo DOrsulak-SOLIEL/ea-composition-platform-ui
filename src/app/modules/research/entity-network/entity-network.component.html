@@ -47,7 +47,7 @@
       </app-autocomplete>
     </div>
     <div class="simple-row " style="height: 55vh; width: 100%;">
-      <div (mouseenter)="drawer.open();" *ngIf="network"
+      <div (mouseenter)="drawer.open(); showSidenavText = true;" *ngIf="network"
            style="height: 100%; width: 40px;" class="side-panel-color"><i
         aria-hidden="true"
         class="fa fa-bars"
@@ -58,82 +58,94 @@
                             style="height: 100%; width: 85%;">
         <mat-drawer #drawer class="example-sidenav black-text side-panel-color" mode="over"
                     style="padding-top: 37px;">
-          <h4 class="black-text row" style="font-weight: bold;">Display Controls:</h4>
-          <div class="simple-row" style="width: 100%;">
-            <label for="displayType" class="" style="width: 85px;margin-top: 5px;">Display Type:</label>
-            <select [(ngModel)]="displayType" id="displayType" class=""
-                    style="width: 100px;"
-                    name="displayType" (ngModelChange)="viewChange($event)">
-              <option value="standard">Standard</option>
-              <option value="hierarchical">Hierarchical</option>
-              <option value="plane">Plane</option>
-            </select>
-          </div>
+          <div *ngIf="showSidenavText">
+            <h4 class="black-text row" style="font-weight: bold;">Display Controls:</h4>
+            <div class="simple-row" style="width: 100%;">
+              <label for="displayType" class="" style="width: 85px;margin-top: 5px;">Display Type:</label>
+              <select [(ngModel)]="displayType" id="displayType" class=""
+                      style="width: 100px;"
+                      name="displayType" (ngModelChange)="viewChange($event)">
+                <option value="standard">Standard</option>
+                <option value="hierarchical">Hierarchical</option>
+                <option value="plane">Plane</option>
+              </select>
+            </div>
 
-          <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType !== 'plane'">
-            <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Node Type:</label>
-            <select [(ngModel)]="nodeType" id="nodeType"
-                    style="width: 100px;"
-                    class=""
-                    name="nodeType" (ngModelChange)="startNetwork({nodes: this.nodes, edges: this.edges})">
-              <option value="">Select...</option>
-              <option value="circle">Circle</option>
-              <option value="ellipse">Ellipse</option>
-              <option value="box">Box</option>
-              <option value="database">Database</option>
-              <option value="dot">Dot</option>
-              <option value="star">Star</option>
-            </select>
-          </div>
+            <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType !== 'plane'">
+              <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Node Type:</label>
+              <select [(ngModel)]="nodeType" id="nodeType"
+                      style="width: 100px;"
+                      class=""
+                      name="nodeType" (ngModelChange)="startNetwork({nodes: this.nodes, edges: this.edges})">
+                <option value="">Select...</option>
+                <option value="circle">Circle</option>
+                <option value="ellipse">Ellipse</option>
+                <option value="box">Box</option>
+                <option value="database">Database</option>
+                <option value="dot">Dot</option>
+                <option value="star">Star</option>
+              </select>
+            </div>
 
-          <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType === 'plane'">
-            <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Line Type:</label>
-            <select [(ngModel)]="curveType" id="curveType"
-                    (ngModelChange)="setInterpolationType($event)"
-                    style="width: 100px;"
-                    class=""
-                    name="curveType">
-              <option value="">Select...</option>
-              <option *ngFor="let curveType of interpolationTypes">{{curveType}}</option>
-            </select>
-          </div>
+            <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType === 'plane'">
+              <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Line Type:</label>
+              <select [(ngModel)]="curveType" id="curveType"
+                      (ngModelChange)="setInterpolationType($event)"
+                      style="width: 100px;"
+                      class=""
+                      name="curveType">
+                <option value="">Select...</option>
+                <option *ngFor="let curveType of interpolationTypes">{{curveType}}</option>
+              </select>
+            </div>
 
-          <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType === 'plane'">
-            <button class="btn btn-primary" style="line-height: 20px;"
-                    (click)="center$.next(true)">
-              Center
-            </button>
-            <button class="btn btn-secondary" style="line-height: 30px; vertical-align: center"
-                    (click)="zoomToFit$.next(true)">
-              Zoom to fit
-            </button>
-          </div>
+            <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType === 'plane'">
+              <button class="btn btn-primary" style="line-height: 20px;"
+                      (click)="center$.next(true)">
+                Center
+              </button>
+              <button class="btn btn-secondary" style="line-height: 30px; vertical-align: center"
+                      (click)="zoomToFit$.next(true)">
+                Zoom to fit
+              </button>
+            </div>
 
-          <div class="simple-row" *ngIf="displayType !== 'plane'" style="margin-top: 15px;">
-            <label style="width: 85px;">Node Size:</label>
-            <button (click)="onDecreaseNodeSize()" [disabled]="nodeSize <= 40 || nodeSizeDisabled"
-                    class="right disabled-button button-icon"><i
-              aria-hidden="true"
-              class="fa fa-minus-circle disabled-btn-color"
-              style="width: 20px; font-size: 20px;color: #B23E3E; margin-top: -5px;"
-            ></i></button>
-            <button (click)="onIncreaseNodeSize()" [disabled]="nodeSize >= 105 || nodeSizeDisabled"
-                    class=" pull-right disabled-button button-icon"><i
-              aria-hidden="true"
-              class="fa fa-plus-circle disabled-btn-color"
-              style="width: 20px; font-size: 20px;color: #328E32; margin-top: -5px;"
-            ></i></button>
+            <div class="simple-row" *ngIf="displayType !== 'plane'" style="margin-top: 15px;">
+              <label style="width: 85px;">Node Size:</label>
+              <button (click)="onDecreaseNodeSize()" [disabled]="nodeSize <= 40 || nodeSizeDisabled"
+                      class="right disabled-button button-icon"><i
+                aria-hidden="true"
+                class="fa fa-minus-circle disabled-btn-color"
+                style="width: 20px; font-size: 20px;color: #B23E3E; margin-top: -5px;"
+              ></i></button>
+              <button (click)="onIncreaseNodeSize()" [disabled]="nodeSize >= 105 || nodeSizeDisabled"
+                      class=" pull-right disabled-button button-icon"><i
+                aria-hidden="true"
+                class="fa fa-plus-circle disabled-btn-color"
+                style="width: 20px; font-size: 20px;color: #328E32; margin-top: -5px;"
+              ></i></button>
+            </div>
           </div>
         </mat-drawer>
 
-        <div class="example-sidenav-content content-color" (mouseenter)="drawer.close();">
+        <div class="example-sidenav-content content-color" (mouseenter)="showSidenavText = false; drawer.close();">
+          <div style="position: relative; width: 100%; height: 50px; z-index: 100 !important;">
+            <button *ngIf="nodeNavHistory && nodeNavHistory.length > 1" (click)="navBackNode()"
+                    class="btn btn-primary pull-right"
+                    style="width: 100px; float: right !important; z-index: 100 !important; height: 50px;">
+              <i class="fa fa-chevron-left"></i>
+              Back
+            </button>
+          </div>
           <div #myEntityNetwork id="myEntityNetwork"
                [class.show]="displayType !== 'plane'"
-               [class.no-show]="displayType === 'plane'">
+               [class.no-show]="displayType === 'plane'"
+               style="position:absolute;">
           </div>
+
           <ngx-graph
-            [class.show]="displayType === 'plane'"
-            [class.no-show]="displayType !== 'plane'"
+            [class.show]="displayType === 'plane' && !bisLoadingData"
+            [class.no-show]="displayType !== 'plane' || bisLoadingData"
             [links]="edgesNGX"
             [nodes]="nodesNGX"
             [clusters]="clusters"
@@ -151,7 +163,7 @@
             [update$]="update$"
             [center$]="center$"
             [zoomToFit$]="zoomToFit$"
-
+            style="position:absolute;"
           >
             <ng-template #defsTemplate>
               <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4"
@@ -176,7 +188,7 @@
             </ng-template>
 
             <ng-template #nodeTemplate let-node>
-              <svg:g class="node">
+              <svg:g class="node" (dblclick)="ngxNodeDoubleClick(node)">
                 <svg:rect [attr.width]="node.dimension.width + 16" [attr.height]="node.dimension.height + 4"
                           [attr.fill]="node.color || node.data.customColor || node.data.color"/>
                 <text alignment-baseline="central" [attr.x]="10"
