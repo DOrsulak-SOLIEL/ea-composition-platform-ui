@@ -17,7 +17,7 @@
         [primaryKey]="'id'"
         [useBuffer]="false"
         bindLabel="id"
-        style="max-width: 220px !important;"
+        style="max-width: 320px !important;"
       >
         <ng-template let-item>
           <div>{{item.name}}&nbsp;</div>
@@ -39,7 +39,7 @@
         [useBuffer]="false"
         [disabled]="!entityValue || !nodeOptions || nodeOptions.length <= 1"
         bindLabel="name"
-        style="max-width: 220px !important;"
+        style="max-width: 320px !important;"
       >
         <ng-template let-item>
           <div>{{item.name}}&nbsp;</div>
@@ -61,9 +61,9 @@
           <div *ngIf="showSidenavText">
             <h4 class="black-text row" style="font-weight: bold;">Display Controls:</h4>
             <div class="simple-row" style="width: 100%;">
-              <label for="displayType" class="" style="width: 85px;margin-top: 5px;">Display Type:</label>
+              <label for="displayType" class="" style="width: 100px;margin-top: 5px;">Display Type:</label>
               <select [(ngModel)]="displayType" id="displayType" class=""
-                      style="width: 100px;"
+                      style="width: 125px;"
                       name="displayType" (ngModelChange)="viewChange($event)">
                 <option value="standard">Standard</option>
                 <option value="hierarchical">Hierarchical</option>
@@ -72,9 +72,9 @@
             </div>
 
             <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType !== 'plane'">
-              <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Node Type:</label>
+              <label for="nodeType" class="" style="width: 100px; margin-top: 5px;">Node Type:</label>
               <select [(ngModel)]="nodeType" id="nodeType"
-                      style="width: 100px;"
+                      style="width: 125px;"
                       class=""
                       name="nodeType" (ngModelChange)="startNetwork({nodes: this.nodes, edges: this.edges})">
                 <option value="">Select...</option>
@@ -88,15 +88,23 @@
             </div>
 
             <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType === 'plane'">
-              <label for="nodeType" class="" style="width: 85px; margin-top: 5px;">Line Type:</label>
+              <label for="nodeType" class="" style="width: 100px; margin-top: 5px;">Line Type:</label>
               <select [(ngModel)]="curveType" id="curveType"
                       (ngModelChange)="setInterpolationType($event)"
-                      style="width: 100px;"
+                      style="width: 125px;"
                       class=""
                       name="curveType">
                 <option value="">Select...</option>
                 <option *ngFor="let curveType of interpolationTypes">{{curveType}}</option>
               </select>
+            </div>
+
+            <div
+              class="simple-row" style="width: 100%; margin-top: 8px;">
+              <label for="sliderr" class="" style="width: 100px; margin-top: 0; line-height: 40px;">Depth:</label>
+              <mat-slider id="sliderr" (change)="updateLevel($event)" max="{{maxLevel}}" min="1" step="1" thumbLabel
+                          tickInterval="1" class="slider" style="line-height: 35px;"
+                          value="{{tickerLevel}}"></mat-slider>
             </div>
 
             <div class="simple-row" style="width: 100%; margin-top: 10px;" *ngIf="displayType === 'plane'">
@@ -110,19 +118,19 @@
               </button>
             </div>
 
-            <div class="simple-row" *ngIf="displayType !== 'plane'" style="margin-top: 15px;">
-              <label style="width: 85px;">Node Size:</label>
+            <div class="simple-row" *ngIf="displayType !== 'plane'" style="margin-top: 0px;">
+              <label style="width: 100px;">Node Size:</label>
               <button (click)="onDecreaseNodeSize()" [disabled]="nodeSize <= 40 || nodeSizeDisabled"
                       class="right disabled-button button-icon"><i
                 aria-hidden="true"
                 class="fa fa-minus-circle disabled-btn-color"
-                style="width: 20px; font-size: 20px;color: #B23E3E; margin-top: -5px;"
+                style="width: 20px; font-size: 20px;color: #ff4081; margin-top: -5px;"
               ></i></button>
               <button (click)="onIncreaseNodeSize()" [disabled]="nodeSize >= 105 || nodeSizeDisabled"
                       class=" pull-right disabled-button button-icon"><i
                 aria-hidden="true"
                 class="fa fa-plus-circle disabled-btn-color"
-                style="width: 20px; font-size: 20px;color: #328E32; margin-top: -5px;"
+                style="width: 20px; font-size: 20px;color: #07ba25; margin-top: -5px;"
               ></i></button>
             </div>
           </div>
@@ -132,7 +140,7 @@
           <div style="position: relative; width: 100%; height: 50px; z-index: 100 !important;">
             <button *ngIf="nodeNavHistory && nodeNavHistory.length > 1" (click)="navBackNode()"
                     class="btn btn-primary pull-right"
-                    style="width: 100px; float: right !important; z-index: 100 !important; height: 50px;">
+                    style="width: 115px; float: right !important; z-index: 100 !important; height: 50px;">
               <i class="fa fa-chevron-left"></i>
               Back
             </button>
@@ -173,40 +181,46 @@
             </ng-template>
 
             <ng-template #clusterTemplate let-cluster>
-              <svg:g class="node cluster" [attr.width]="cluster.dimension.width + 20"
-                     [attr.height]="cluster.dimension.height">
-                <svg:rect x="5" y="5" [attr.width]="cluster.dimension.width + 20"
-                          [attr.height]="cluster.dimension.height"
-                          [attr.fill]="cluster.data.planeColor || cluster.data.color">
-                </svg:rect>
-                <text font-family="Verdana" font-size="50" fill="#2f4b7c" font-weight="bold"
-                      [attr.width]="cluster.dimension.width + 20" [attr.x]="(cluster.dimension.width + 20) / 2" y="42"
-                      dominant-baseline="middle"
-                      text-anchor="middle"
-                >{{cluster.label}}</text>
-              </svg:g>
+              <ng-container *ngIf="!cluster.data.hidden">
+                <svg:g class="node cluster" [attr.width]="cluster.dimension.width + 20"
+                       [attr.height]="cluster.dimension.height">
+                  <svg:rect x="5" y="5" [attr.width]="cluster.dimension.width + 20"
+                            [attr.height]="cluster.dimension.height"
+                            [attr.fill]="cluster.data.planeColor || cluster.data.color">
+                  </svg:rect>
+                  <text font-family="Verdana" font-size="50" fill="#2f4b7c" font-weight="bold"
+                        [attr.width]="cluster.dimension.width + 20" [attr.x]="(cluster.dimension.width + 20) / 2" y="42"
+                        dominant-baseline="middle"
+                        text-anchor="middle"
+                  >{{cluster.label}}</text>
+                </svg:g>
+              </ng-container>
             </ng-template>
 
             <ng-template #nodeTemplate let-node>
-              <svg:g class="node" (dblclick)="ngxNodeDoubleClick(node)">
-                <svg:rect [attr.width]="node.dimension.width + 16" [attr.height]="node.dimension.height + 4"
-                          [attr.fill]="node.color || node.data.customColor || node.data.color"/>
-                <text alignment-baseline="central" [attr.x]="10"
-                      [attr.y]="node.dimension.height / 2" fill="white" font-size="35">{{node.label}}</text>
-              </svg:g>
+              <ng-container *ngIf="!node.hidden">
+                <svg:g class="node" (dblclick)="ngxNodeDoubleClick(node)">
+                  <svg:rect [attr.width]="node.dimension.width + 16" [attr.height]="node.dimension.height + 4"
+                            [attr.fill]="node.color || node.data.customColor || node.data.color"/>
+                  <text alignment-baseline="central" [attr.x]="10"
+                        [attr.y]="node.dimension.height / 2" fill="white" font-size="35">{{node.label}}</text>
+                </svg:g>
+              </ng-container>
             </ng-template>
 
             <ng-template #linkTemplate let-link>
-              <svg:g class="edge">
-                <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
-                </svg:path>
-                <svg:text class="edge-label" text-anchor="middle">
-                  <textPath class="text-path" [attr.href]="'#' + link.id" font-size="30"
-                            [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
-                    {{link.label}}
-                  </textPath>
-                </svg:text>
-              </svg:g>
+              <ng-container *ngIf="!link.hidden">
+                <svg:g class="edge">
+                  <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
+                  </svg:path>
+                  <svg:text class="edge-label" text-anchor="middle">
+                    <textPath class="text-path" [attr.href]="'#' + link.id" font-size="25"
+                              [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
+                      {{link.label}}
+                    </textPath>
+                  </svg:text>
+                </svg:g>
+              </ng-container>
             </ng-template>
           </ngx-graph>
         </div>

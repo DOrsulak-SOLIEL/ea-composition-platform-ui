@@ -61,7 +61,7 @@ code {
 }
 
 .example-sidenav {
-  padding: 20px;
+  padding: 10px;
 }
 
 
@@ -118,4 +118,25 @@ code {
   .disabled-btn-color {
     color: dimgrey !important;
   }
+}
+
+.slider {
+  color: #ff4081 !important;
+  margin-right: 15px !important;
+}
+
+:host ::ng-deep .slider .mat-slider-thumb {
+  background-color: #ff4081 !important;;
+}
+
+:host ::ng-deep .slider .mat-slider-thumb-label {
+  background-color: #ff4081 !important;;
+}
+
+:host ::ng-deep .slider .mat-slider-track-fill {
+  background-color: #ff4081 !important;;
+}
+
+:host ::ng-deep .mat-slider-track-background {
+  background-color: lightsteelblue !important;
 }

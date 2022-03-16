@@ -20,6 +20,7 @@ import {ThemeModule} from "../../shared/common/theme";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {NavigationModule} from "../../shared/components/layout/navigations/navigation.module";
 import {NgxGraphModule} from "@swimlane/ngx-graph";
+import {MatSliderModule} from "@angular/material/slider";
 
 @NgModule({
     imports: [
@@ -40,7 +41,8 @@ import {NgxGraphModule} from "@swimlane/ngx-graph";
         ThemeModule,
         MatSidenavModule,
         NavigationModule,
-        NgxGraphModule
+        NgxGraphModule,
+        MatSliderModule
     ],
   declarations: [
     EntityNetworkComponent,
