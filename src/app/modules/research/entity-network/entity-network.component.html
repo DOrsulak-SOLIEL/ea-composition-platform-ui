@@ -99,6 +99,14 @@
               </select>
             </div>
 
+            <div class="simple-row" style="width: 100%; padding-top: 15px;" *ngIf="displayType === 'plane'">
+              <label for="nodeType" class="" style="width: 100px; line-height: 18px;">Cluster:</label>
+              <mat-slide-toggle
+                style="height: 18px;padding-left: 5px; padding-right: 5px;"
+                [(ngModel)]="isClusterInteractive" (change)="toggleClusterType()">Interactive
+              </mat-slide-toggle>
+            </div>
+
             <div
               class="simple-row" style="width: 100%; margin-top: 8px;">
               <label for="sliderr" class="" style="width: 100px; margin-top: 0; line-height: 40px;">Depth:</label>
@@ -159,6 +167,7 @@
             [clusters]="clusters"
             [layout]="layout"
             [curve]="curve"
+            [autoCenter]="true"
             [draggingEnabled]="draggingEnabled"
             [panningEnabled]="panningEnabled"
             [enableZoom]="zoomEnabled"
@@ -166,8 +175,6 @@
             [minZoomLevel]="minZoomLevel"
             [maxZoomLevel]="maxZoomLevel"
             [panOnZoom]="panOnZoom"
-            [autoZoom]="autoZoom"
-            [autoCenter]="autoCenter"
             [update$]="update$"
             [center$]="center$"
             [zoomToFit$]="zoomToFit$"
@@ -183,12 +190,12 @@
             <ng-template #clusterTemplate let-cluster>
               <ng-container *ngIf="!cluster.data.hidden">
                 <svg:g class="node cluster" [attr.width]="cluster.dimension.width + 20"
-                       [attr.height]="cluster.dimension.height">
-                  <svg:rect x="5" y="5" [attr.width]="cluster.dimension.width + 20"
+                       [attr.height]="(cluster.dimension.height || 0 )">
+                  <svg:rect x="5" y="5" [attr.width]="(cluster.dimension.width + 20)"
                             [attr.height]="cluster.dimension.height"
                             [attr.fill]="cluster.data.planeColor || cluster.data.color">
                   </svg:rect>
-                  <text font-family="Verdana" font-size="50" fill="#2f4b7c" font-weight="bold"
+                  <text font-family="Verdana" font-size="35" fill="#2f4b7c" font-weight="bold"
                         [attr.width]="cluster.dimension.width + 20" [attr.x]="(cluster.dimension.width + 20) / 2" y="42"
                         dominant-baseline="middle"
                         text-anchor="middle"
@@ -198,23 +205,45 @@
             </ng-template>
 
             <ng-template #nodeTemplate let-node>
-              <ng-container *ngIf="!node.hidden">
+              <ng-container *ngIf="!node.hidden && layout === 'colaForceDirected'">
                 <svg:g class="node" (dblclick)="ngxNodeDoubleClick(node)">
-                  <svg:rect [attr.width]="node.dimension.width + 16" [attr.height]="node.dimension.height + 4"
+                  <svg:rect [attr.width]="node.dimension.width + 16" [attr.height]="node.dimension.height"
                             [attr.fill]="node.color || node.data.customColor || node.data.color"/>
                   <text alignment-baseline="central" [attr.x]="10"
-                        [attr.y]="node.dimension.height / 2" fill="white" font-size="35">{{node.label}}</text>
+                        [attr.y]="node.dimension.height / 2" fill="white"
+                        font-size="15">{{node.label}}</text>
+                </svg:g>
+              </ng-container>
+              <ng-container *ngIf="!node.hidden && layout !== 'colaForceDirected'">
+                <svg:g class="node" (dblclick)="ngxNodeDoubleClick(node)">
+                  <svg:rect [attr.width]="node.dimension.width + 16" [attr.height]="node.dimension.height + 2"
+                            [attr.fill]="node.color || node.data.customColor || node.data.color"/>
+                  <text alignment-baseline="central" [attr.x]="10"
+                        [attr.y]="node.dimension.height / 2" fill="white"
+                        font-size="35">{{node.label}}</text>
                 </svg:g>
               </ng-container>
             </ng-template>
 
             <ng-template #linkTemplate let-link>
-              <ng-container *ngIf="!link.hidden">
+              <ng-container *ngIf="!link.hidden && layout === 'colaForceDirected'">
                 <svg:g class="edge">
                   <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
                   </svg:path>
                   <svg:text class="edge-label" text-anchor="middle">
-                    <textPath class="text-path" [attr.href]="'#' + link.id" font-size="25"
+                    <textPath class="text-path" [attr.href]="'#' + link.id" font-size="9"
+                              [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
+                      {{link.label}}
+                    </textPath>
+                  </svg:text>
+                </svg:g>
+              </ng-container>
+              <ng-container *ngIf="!link.hidden && layout !== 'colaForceDirected'">
+                <svg:g class="edge">
+                  <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
+                  </svg:path>
+                  <svg:text class="edge-label" text-anchor="middle">
+                    <textPath class="text-path" [attr.href]="'#' + link.id" font-size="22"
                               [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
                       {{link.label}}
                     </textPath>

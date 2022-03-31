@@ -21,6 +21,7 @@ import {MatSidenavModule} from "@angular/material/sidenav";
 import {NavigationModule} from "../../shared/components/layout/navigations/navigation.module";
 import {NgxGraphModule} from "@swimlane/ngx-graph";
 import {MatSliderModule} from "@angular/material/slider";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @NgModule({
     imports: [
@@ -42,7 +43,8 @@ import {MatSliderModule} from "@angular/material/slider";
         MatSidenavModule,
         NavigationModule,
         NgxGraphModule,
-        MatSliderModule
+        MatSliderModule,
+        MatSlideToggleModule
     ],
   declarations: [
     EntityNetworkComponent,
