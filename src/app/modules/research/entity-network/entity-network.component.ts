@@ -55,7 +55,8 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
   nodeNavHistory: IDropdownEntityState[] = [];
 
   layout: string | Layout = 'dagreCluster';
-
+  clusterLabelFontSize = 14;
+  isClusterInteractive = false;
   // line interpolation
   curveType: string = 'Bundle';
   curve: any = shape.curveMonotoneY; // shape.curveLinear;
@@ -307,7 +308,6 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
       }
       this.bisLoadingData = false;
       this.zoomToFit$.next(true);
-      this.zoomToFit$.next(true);
       this.network.on("doubleClick", (params: any) => {
         if (params && params.nodes && params.nodes.length >= 1) {
           const nodeIndex = this.nodes.findIndex(node => node.id === params.nodes[0]);
@@ -410,7 +410,7 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
               id: node.type,
               label: this.utilService.capitalizeFirstLetter(node.type) + ' Plane',
               childNodeIds: [node.id],
-              data: {color: '', rx: length * 200, ry: 200}
+              data: {color: '', rx: length * 200, ry: 200},
             });
             this.clusters[this.clusters.length - 1].data.planeColor = this.getPlaneColor(node.type);
           }
@@ -424,7 +424,7 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
               level: 1,
               label: this.nodeValue.name || node.name || node.id,
               levelColor: this.getColorFromLevel(1),
-              color: this.getColorFromPlane(node.type)
+              color: this.getColorFromPlane(node.type),
             }
           } else if (node && node.id) {
             return {
@@ -542,9 +542,10 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
       this.startNetwork({nodes: this.nodes, edges: this.edges});
       this.network.fit();
     } else {
+      this.bisLoadingData = false;
       this.update$.next(true);
       this.center$.next(true);
-      this.bisLoadingData = false;
+      this.zoomToFit$.next(true)
     }
   }
 
@@ -664,5 +665,16 @@ export class EntityNetworkComponent implements OnInit, AfterViewInit, OnDestroy 
     this.edgesNGX.forEach((obj: EADPEdge) => {
       obj.hidden = false;
     });
+  }
+
+  toggleClusterType() {
+    if (this.isClusterInteractive) {
+      this.layout = 'colaForceDirected';
+      this.clusterLabelFontSize = 14;
+    } else {
+      this.layout = 'dagreCluster';
+      this.clusterLabelFontSize = 30;
+    }
+    this.center$.next(true);
   }
 }
